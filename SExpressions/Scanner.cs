@@ -107,6 +107,7 @@ namespace SExpressions
         {
             var startIdx = CurrentIdx;
             var startColumn = CurrentColumn;
+
             while (!IsAtEnd() && char.IsLetterOrDigit(GetCurrentChar()))
             {
                 MoveNext();
