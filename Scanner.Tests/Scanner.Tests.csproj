@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SExpressions\SExpressions.csproj" />
+    <ProjectReference Include="..\SExpressions\Scanner.csproj" />
   </ItemGroup>
 
   <ItemGroup>

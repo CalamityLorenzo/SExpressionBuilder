@@ -37,7 +37,6 @@ namespace SExpressions
             return new(token, canonicalValue, AllChars.Span.Slice(startIndex, length).ToString(), startLine, startColumn);
         }
 
-
         private void Process(char currentChar)
         {
             switch (currentChar)
@@ -55,8 +54,6 @@ namespace SExpressions
                         var stringOperator = $"{currentChar}=";
                         var doubleOperator = LookUp.Operators[stringOperator];
                         Tokens.Add(CreateToken(doubleOperator, stringOperator, CurrentIdx, 2));
-                        // Account for the =
-                        // MoveNext();
                     }
                     else
                     {
@@ -83,6 +80,25 @@ namespace SExpressions
                     break;
                 case char c when char.IsDigit(c):
                     ProcessNumber();
+                    break;
+                default:
+                    if (char.IsWhiteSpace(currentChar))
+                    {
+                        // Ignore whitespace
+                    }
+                    else if (currentChar == ';')
+                    {
+                        // Comment, ignore rest of line
+                        while (!IsAtEnd() && GetCurrentChar() != '\n')
+                        {
+                            MoveNext();
+                        }
+                    }
+                    else
+                    {
+                        // Unknown character, throw an error or handle it as needed
+                        throw new InvalidOperationException($"Unknown character '{currentChar}' at line {CurrentLine}, column {CurrentColumn}.");
+                    }
                     break;
             }
        }
