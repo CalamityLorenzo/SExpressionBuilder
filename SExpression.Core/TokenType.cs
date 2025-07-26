@@ -29,14 +29,13 @@
         DoublePipe,
 
 
-
         DoubleQuote,
         SingleQuote,
         Character,
         Number,
         Keyword,
         Identifier,
-
+        String,
         OpenBracket,
         ClosedBracket,
 
@@ -63,8 +62,10 @@
                                                             {">=",TokenType.GreaterThanEquals  },
                                                             {"<",TokenType.LessThan},
                                                             {"<=",TokenType.LessThanEquals  },
-                                                             {"!",TokenType.Ping},
-                                                            {"!=",TokenType.PlusEquals  },
+                                                            {"!",TokenType.Ping},
+                                                            {"!=",TokenType.PingEquals  },
+                                                            {"=",TokenType.Ping},
+                                                            {"==",TokenType.PingEquals  },
         };
 
 

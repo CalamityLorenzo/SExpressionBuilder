@@ -19,7 +19,7 @@ namespace Scanner.Tests
         [InlineData("1234567", 1)]
         [InlineData("123+4567", 3)]
         [InlineData("123+4567-123", 5)]
-        [InlineData("(+ 123 abc (define (= a 2)))", 12)]
+        [InlineData("(+ 123 abc (define (= a 2)))", 13)]
         public void ScannerBasicTokens(string input, int tokenCount)
         {
             var scanner = new SExpressions.Scanner();
@@ -46,6 +46,18 @@ namespace Scanner.Tests
         [Theory]
         [InlineData("123+4567", 3)]
         public void ScannerBasicExpression(string input, int tokenCount)
+        {
+            var scanner = new SExpressions.Scanner();
+            var output = scanner.ScanDocument(input);
+            logOutput.WriteLine($"Number of tokens : {output.Count()}");
+            Assert.True(output.Count == tokenCount);
+        }
+
+        [Theory]
+        [InlineData("\"abcdef\"", 1)]
+        [InlineData("(\"abcdef\")", 3)]
+        [InlineData("(\"ab\" \"cdef\")", 4)]
+        public void ScannerStrings(string input, int tokenCount)
         {
             var scanner = new SExpressions.Scanner();
             var output = scanner.ScanDocument(input);

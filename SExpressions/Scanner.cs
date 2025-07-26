@@ -47,7 +47,7 @@ namespace SExpressions
                 case '\n' or '\r':
                     AddNewLine();
                     break;
-                case '!' or '-' or '+' or '>' or '<' or '*' or '\\':
+                case '!' or '-' or '+' or '>' or '<' or '*' or '\\' or '=':
 
                     if (Peek() == '=')
                     {
@@ -61,6 +61,9 @@ namespace SExpressions
                         var @operator = LookUp.Operators[stringOperator];
                         Tokens.Add(CreateToken(@operator, stringOperator, CurrentIdx));
                     }
+                    break;
+                case '\"':
+                    ScanString();
                     break;
                 case '(':
                     Tokens.Add(CreateToken(TokenType.OpenBracket, "(", CurrentIdx));
@@ -76,10 +79,10 @@ namespace SExpressions
                     break;
                 case ' ': break;
                 case char c when char.IsLetter(c):
-                    ProcessIdentifierKeyword();
+                    ScanIdentifierKeyword();
                     break;
                 case char c when char.IsDigit(c):
-                    ProcessNumber();
+                    ScanNumber();
                     break;
                 default:
                     if (char.IsWhiteSpace(currentChar))
@@ -103,7 +106,33 @@ namespace SExpressions
             }
        }
 
-        private void ProcessNumber()
+        private void ScanString()
+        {
+            // When we arrrive here we know we have a double quote.
+            // Scan the string until we find the terminating quote.
+            // eg "grg" but "asdfsdf\"" and ""
+            var startIdx = CurrentIdx;
+            var startColumn = CurrentColumn;
+            var peekedChar = Peek();
+            // Have we entere4d into an escapted char stream eg \n \t \" etc
+            var escapedChar= false;
+            while (!IsAtEnd() && ((!escapedChar && peekedChar != '"') || (escapedChar && peekedChar =='"' )))
+            {
+                MoveNext();
+                peekedChar = Peek();
+                escapedChar = IsAtEnd() ? false :  GetCurrentChar() == '\\';
+            }
+
+            if (IsAtEnd() && GetCurrentChar() != '\"')
+                throw new ScannerException($"{nameof(ScanString)} Reached end of input, expected terminating \"");
+            
+            MoveNext(); // Move past the closing quote
+            // +1 to include the closing quote in the token length
+            Tokens.Add(CreateToken(TokenType.String, "", startIdx, CurrentLine, startColumn, (CurrentIdx - startIdx) +1));
+
+        }
+
+        private void ScanNumber()
         {
 
             // When we arrrive here we know we have a number already.
@@ -119,7 +148,7 @@ namespace SExpressions
             Tokens.Add(CreateToken(TokenType.Number, word, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx));
         }
 
-        private void ProcessIdentifierKeyword()
+        private void ScanIdentifierKeyword()
         {
             var startIdx = CurrentIdx;
             var startColumn = CurrentColumn;
