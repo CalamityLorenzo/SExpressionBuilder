@@ -67,7 +67,22 @@ namespace SExpressions
                 case '}':
                     Tokens.Add(CreateToken(TokenType.ClosedBrace, "}"));
                     break;
+                case ' ': break;
+                case char c when char.IsLetter(c):
+                    ProcessIdentifier();
+                    break;
             }
+        }
+
+        private void ProcessIdentifier()
+        {
+            var startIdx = CurrentIdx;
+            while (!IsAtEnd() && char.IsLetterOrDigit(GetCurrentChar()))
+            {
+                MoveNext();
+            }
+            var value = AllChars.Span.Slice(startIdx, CurrentIdx - startIdx).ToString();
+            Tokens.Add(new ScannerToken(TokenType.Keyword, value, value, CurrentLine, CurrentColumn));
         }
 
         private ScannerToken CreateToken(TokenType ping, string Value, int length =1)
