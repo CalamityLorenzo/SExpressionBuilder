@@ -69,7 +69,7 @@ namespace SExpressions
                     Tokens.Add(CreateToken(TokenType.OpenBracket, "(", CurrentIdx));
                     break;
                 case ')':
-                    Tokens.Add(CreateToken(TokenType.ClosedBracket, ")", CurrentIdx));
+                    Tokens.Add(CreateToken(TokenType.CloseBracket, ")", CurrentIdx));
                     break;
                 case '{':
                     Tokens.Add(CreateToken(TokenType.OpenBrace, "{", CurrentIdx));

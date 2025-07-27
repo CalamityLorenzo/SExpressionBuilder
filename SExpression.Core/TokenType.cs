@@ -37,7 +37,7 @@
         Identifier,
         String,
         OpenBracket,
-        ClosedBracket,
+        CloseBracket,
 
         OpenBrace,
         ClosedBrace,

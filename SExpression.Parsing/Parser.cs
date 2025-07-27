@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using SExpression.Core.IR;
 using SExpressions;
+using System.Linq.Expressions;
 
 namespace SExpression.Parsing
 {
@@ -30,63 +32,88 @@ namespace SExpression.Parsing
             FindExpression();
         }
 
-        private void FindExpression()
+        private Core.IR.SExpression FindExpression()
         {
             var root = this.Tokens.Peek();
             if (root.TokenType == Core.TokenType.OpenBracket)
             {
-                FindList();
+                return FindList();
             }
             else
             {
-                FindAtom();
+                return BuildAtom();
             }
         }
 
-        private void FindAtom()
+        private Core.IR.SExpression BuildAtom()
         {
             var current = this.Tokens.Peek();
 
-            switch (current.TokenType)
+            var Atom = current.TokenType switch
             {
-                case Core.TokenType.Number:
-                    FindNumber();
-                    break;
-                case Core.TokenType.String:
-                    FindString();
-                    break;
-                case Core.TokenType a when a == Core.TokenType.Keyword && (current.Value == "t" || current.Value == "nil"):
-                    FindBoolean();
-                    break;
-                case Core.TokenType b when b == Core.TokenType.Identifier || b == Core.TokenType.Keyword:
-                    FindSymbol();
-                    break;
-                default:
-                    break;
+                Core.TokenType.Number => AtomNumber(),
+                Core.TokenType.String => AtomString(),
+                Core.TokenType a when a == Core.TokenType.Keyword && (current.Value == "t" || current.Value == "nil") => AtomBoolean(),
+                _ => AtomSymbol()
+            };
+            return Atom;
+
+        }
+
+        private Core.IR.SExpression AtomSymbol()
+        {
+            var symbolToken = this.Tokens.Pop();
+            if (symbolToken.TokenType != Core.TokenType.Identifier || symbolToken.TokenType != Core.TokenType.Keyword)
+            {
+                var msg = $"Expected a symbol but found {symbolToken.TokenType} at ln:{symbolToken.lineNumber}:{symbolToken.column}";
+                _logger.LogCritical(msg, nameof(AtomSymbol));
+                throw new SExpression.ParserException(msg);
             }
+            // Process the symbol token as needed
+            return new SExpressionSymbol(symbolToken.Value, symbolToken.TokenType == Core.TokenType.Keyword);
         }
 
-        private void FindSymbol()
+        private Core.IR.SExpression AtomBoolean()
         {
-            throw new NotImplementedException();
+            var booleanToken = this.Tokens.Pop();
+            if (booleanToken.TokenType != Core.TokenType.Keyword && (booleanToken.Value != "t" || booleanToken.Value != "nil"))
+            {
+                var msg = $"Expected a boolean but found {booleanToken.TokenType} at ln:{booleanToken.lineNumber}:{booleanToken.column}";
+                _logger.LogCritical(msg, nameof(AtomBoolean));
+                throw new SExpression.ParserException(msg);
+            }
+            // Process the boolean token as needed
+            return new SExpressionBoolean(booleanToken.Value == "t");
         }
 
-        private void FindBoolean()
+        private Core.IR.SExpression AtomString()
         {
-            throw new NotImplementedException();
+            var stringToken = this.Tokens.Pop();
+            if (stringToken.TokenType != Core.TokenType.String)
+            {
+                var msg = $"Expected a string but found {stringToken.TokenType} at ln:{stringToken.lineNumber}:{stringToken.column}";
+                _logger.LogCritical(msg, nameof(AtomString));
+                throw new SExpression.ParserException(msg);
+            }
+            // Process the string token as needed
+            return new SExpressionString(stringToken.Value);
+
         }
 
-        private void FindString()
+        private Core.IR.SExpression AtomNumber()
         {
-            throw new NotImplementedException();
+            var numberToken = this.Tokens.Pop();
+            if (numberToken.TokenType != Core.TokenType.Number)
+            {
+                var msg = $"Expected a number but found {numberToken.TokenType} at ln:{numberToken.lineNumber}:{numberToken.column}";
+                _logger.LogCritical(msg, nameof(AtomNumber));
+                throw new SExpression.ParserException(msg);
+            }
+            // Process the number token as needed
+            return new SExpressionNumber(numberToken.Value);
         }
 
-        private void FindNumber()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void FindList()
+        private Core.IR.SExpression FindList()
         {
             var BetterBeAOpenBracket = this.Tokens.Pop();
             if (BetterBeAOpenBracket.TokenType != Core.TokenType.OpenBracket)
@@ -96,8 +123,13 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
 
-            FindExpression();
+            List<Core.IR.SExpression> expressions = new List<Core.IR.SExpression>();
+            while (this.Tokens.Peek().TokenType != Core.TokenType.CloseBracket)
+            {
+                expressions.Add(FindExpression());
+            }
 
+            return new SExpressionList(expressions);
         }
     }
 }

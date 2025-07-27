@@ -2,17 +2,13 @@
 {
     public class SExpressionSymbol : SExpression
     {
-        public SExpressionSymbol(string name) : base()
+
+        bool IsKeyword { get;init; }
+
+        public SExpressionSymbol(string name, bool isKeyword) : base()
         {
-            this.Name = name;
-        }
-        public SExpressionSymbol() : base()
-        {
-            this.Name = string.Empty;
-        }
-        public override string ToString()
-        {
-            return this.Name ?? string.Empty;
+            this.Value = name;
+            IsKeyword = isKeyword;
         }
     }
 }
