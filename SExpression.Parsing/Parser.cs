@@ -18,26 +18,34 @@ namespace SExpression.Parsing
     public class Parser(ILogger<Parser> logger)
     {
         private readonly ILogger<Parser> _logger = logger;
+        private List<Core.IR.SExpression> _SExpressions;
 
         public Stack<ScannerToken> Tokens { get; private set; }
 
-        public void Parse(List<ScannerToken> tokens)
+        public List<Core.IR.SExpression> Parse(List<ScannerToken> tokens)
         {
-            this.Tokens = new Stack<ScannerToken>(tokens);
-            FindProgram();
+            this.Tokens = new Stack<ScannerToken>(tokens.Reverse<ScannerToken>());
+            return FindProgram();
         }
 
-        private void FindProgram()
+        private List<Core.IR.SExpression> FindProgram()
         {
-            FindExpression();
+            this._SExpressions = new List<Core.IR.SExpression>();
+            while (this.Tokens.TryPeek(out var peekedToken))
+            {
+                _SExpressions.Add(BuildSExpression());
+
+            }
+            return _SExpressions;
         }
 
-        private Core.IR.SExpression FindExpression()
+        private Core.IR.SExpression BuildSExpression()
         {
             var root = this.Tokens.Peek();
+
             if (root.TokenType == Core.TokenType.OpenBracket)
             {
-                return FindList();
+                return BuildList();
             }
             else
             {
@@ -91,7 +99,7 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
             // Process the string token as needed
-            return new SExpressionString(stringToken.Value);
+            return new SExpressionString(stringToken.SourceValue);
 
         }
 
@@ -108,22 +116,29 @@ namespace SExpression.Parsing
             return new SExpressionNumber(numberToken.Value);
         }
 
-        private Core.IR.SExpression FindList()
+        private Core.IR.SExpression BuildList()
         {
             var BetterBeAOpenBracket = this.Tokens.Pop();
             if (BetterBeAOpenBracket.TokenType != Core.TokenType.OpenBracket)
             {
                 var msg = $"Expected opening '(' for list instead found {BetterBeAOpenBracket.TokenType} at , ln:{BetterBeAOpenBracket.lineNumber}:{BetterBeAOpenBracket.column}";
-                _logger.LogCritical(msg, nameof(FindList));
+                _logger.LogCritical(msg, nameof(BuildList));
                 throw new SExpression.ParserException(msg);
             }
 
             List<Core.IR.SExpression> expressions = new List<Core.IR.SExpression>();
             while (this.Tokens.Peek().TokenType != Core.TokenType.CloseBracket)
             {
-                expressions.Add(FindExpression());
+                expressions.Add(BuildSExpression());
             }
 
+            var BetterBeAClosedBracket = this.Tokens.Pop();
+            if(BetterBeAClosedBracket.TokenType != Core.TokenType.CloseBracket)
+            {
+                var msg = $"Expected closing ')' for list instead found {BetterBeAClosedBracket.TokenType} at , ln:{BetterBeAClosedBracket.lineNumber}:{BetterBeAClosedBracket.column}";
+                _logger.LogCritical(msg, nameof(BuildList));
+                throw new SExpression.ParserException(msg);
+            }
             return new SExpressionList(expressions);
         }
     }

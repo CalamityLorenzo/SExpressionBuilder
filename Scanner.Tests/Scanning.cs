@@ -2,11 +2,11 @@
 
 namespace Scanner.Tests
 {
-    public class BasicScanner
+    public class Scanning
     {
         private ITestOutputHelper logOutput;
 
-        public BasicScanner(ITestOutputHelper testOutputHelper)
+        public Scanning(ITestOutputHelper testOutputHelper)
         {
             logOutput = testOutputHelper;
         }
@@ -19,8 +19,9 @@ namespace Scanner.Tests
         [InlineData("1234567", 1)]
         [InlineData("123+4567", 3)]
         [InlineData("123+4567-123", 5)]
+        [InlineData("(+ 123 \"abcdef\" define)", 6)]
         [InlineData("(+ 123 abc (define (= a 2)))", 13)]
-        public void ScannerBasicTokens(string input, int tokenCount)
+        public void ScanBasicTokens(string input, int tokenCount)
         {
             var scanner = new SExpressions.Scanner();
             var output = scanner.ScanDocument(input);

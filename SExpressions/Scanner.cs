@@ -153,12 +153,12 @@ namespace SExpressions
             var startIdx = CurrentIdx;
             var startColumn = CurrentColumn;
 
-            while (!IsAtEnd() && char.IsLetterOrDigit(GetCurrentChar()))
+            while (!IsAtEnd() && char.IsLetterOrDigit(Peek()))
             {
                 MoveNext();
             }
 
-            var word = AllChars.Span.Slice(startIdx, CurrentIdx - startIdx).ToString().ToLowerInvariant();
+            var word = AllChars.Span.Slice(startIdx, ((CurrentIdx+1) - startIdx)).ToString().ToLowerInvariant();
 
             if (LookUps.Keywords.TryGetValue(word, out var canonicalValue))
             {
