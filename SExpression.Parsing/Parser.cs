@@ -46,15 +46,34 @@ namespace SExpression.Parsing
         private void FindAtom()
         {
             var current = this.Tokens.Peek();
-            if (current.TokenType == Core.TokenType.Number)
-            {
-                FindNumber();
-            }
 
-            if (current.TokenType == Core.TokenType.String)
+            switch (current.TokenType)
             {
-                FindString();
+                case Core.TokenType.Number:
+                    FindNumber();
+                    break;
+                case Core.TokenType.String:
+                    FindString();
+                    break;
+                case Core.TokenType a when a == Core.TokenType.Keyword && (current.Value == "t" || current.Value == "nil"):
+                    FindBoolean();
+                    break;
+                case Core.TokenType b when b == Core.TokenType.Identifier || b == Core.TokenType.Keyword:
+                    FindSymbol();
+                    break;
+                default:
+                    break;
             }
+        }
+
+        private void FindSymbol()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void FindBoolean()
+        {
+            throw new NotImplementedException();
         }
 
         private void FindString()

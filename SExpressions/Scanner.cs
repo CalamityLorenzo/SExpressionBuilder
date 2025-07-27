@@ -52,13 +52,13 @@ namespace SExpressions
                     if (Peek() == '=')
                     {
                         var stringOperator = $"{currentChar}=";
-                        var doubleOperator = LookUp.Operators[stringOperator];
+                        var doubleOperator = LookUps.Operators[stringOperator];
                         Tokens.Add(CreateToken(doubleOperator, stringOperator, CurrentIdx, 2));
                     }
                     else
                     {
                         var stringOperator = $"{currentChar}";
-                        var @operator = LookUp.Operators[stringOperator];
+                        var @operator = LookUps.Operators[stringOperator];
                         Tokens.Add(CreateToken(@operator, stringOperator, CurrentIdx));
                     }
                     break;
@@ -160,7 +160,7 @@ namespace SExpressions
 
             var word = AllChars.Span.Slice(startIdx, CurrentIdx - startIdx).ToString().ToLowerInvariant();
 
-            if (LookUp.Keywords.TryGetValue(word, out var canonicalValue))
+            if (LookUps.Keywords.TryGetValue(word, out var canonicalValue))
             {
                 Tokens.Add(
                 CreateToken(TokenType.Keyword, canonicalValue, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx)
