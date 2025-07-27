@@ -63,12 +63,7 @@ namespace SExpression.Parsing
         private Core.IR.SExpression AtomSymbol()
         {
             var symbolToken = this.Tokens.Pop();
-            if (symbolToken.TokenType != Core.TokenType.Identifier || symbolToken.TokenType != Core.TokenType.Keyword)
-            {
-                var msg = $"Expected a symbol but found {symbolToken.TokenType} at ln:{symbolToken.lineNumber}:{symbolToken.column}";
-                _logger.LogCritical(msg, nameof(AtomSymbol));
-                throw new SExpression.ParserException(msg);
-            }
+
             // Process the symbol token as needed
             return new SExpressionSymbol(symbolToken.Value, symbolToken.TokenType == Core.TokenType.Keyword);
         }

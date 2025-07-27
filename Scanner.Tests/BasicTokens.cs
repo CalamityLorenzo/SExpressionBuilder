@@ -2,11 +2,11 @@
 
 namespace Scanner.Tests
 {
-    public class BasicTokens
+    public class BasicScanner
     {
         private ITestOutputHelper logOutput;
 
-        public BasicTokens(ITestOutputHelper testOutputHelper)
+        public BasicScanner(ITestOutputHelper testOutputHelper)
         {
             logOutput = testOutputHelper;
         }
