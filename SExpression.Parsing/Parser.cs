@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SExpression.Core;
 using SExpression.Core.IR;
 using SExpressions;
 using System.Linq.Expressions;
@@ -72,10 +73,18 @@ namespace SExpression.Parsing
         {
             var symbolToken = this.Tokens.Pop();
 
-            // Process the symbol token as needed
-            return new SExpressionSymbol(symbolToken.Value, symbolToken.TokenType == Core.TokenType.Keyword);
-        }
+            // can be
 
+            // A Keyword
+            return symbolToken.TokenType switch
+            {
+                Core.TokenType.Keyword => new SExpressionSymbolKeyword(symbolToken.Value),
+                Core.TokenType.Identifier => new SExpressionSymbolIdentifier(symbolToken.Value),
+                Core.TokenType ops when LookUps.Operators.ContainsKey(symbolToken.SourceValue) => new SExpressionSymbolOperator(symbolToken.SourceValue),
+                _ => throw new ParserException($"Atom Symbol type not found {symbolToken.Value}")
+            };
+
+        }
         private Core.IR.SExpression AtomBoolean()
         {
             var booleanToken = this.Tokens.Pop();
@@ -99,7 +108,14 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
             // Process the string token as needed
-            return new SExpressionString(stringToken.SourceValue);
+            if (stringToken.SourceValue == "\"\"") // The empty string case
+            {
+                return new SExpressionString(String.Empty);
+            }
+            else
+            {
+                return new SExpressionString(stringToken.SourceValue.AsSpan(1, stringToken.SourceValue.Length - 2).ToString());
+            }
 
         }
 
@@ -133,7 +149,7 @@ namespace SExpression.Parsing
             }
 
             var BetterBeAClosedBracket = this.Tokens.Pop();
-            if(BetterBeAClosedBracket.TokenType != Core.TokenType.CloseBracket)
+            if (BetterBeAClosedBracket.TokenType != Core.TokenType.CloseBracket)
             {
                 var msg = $"Expected closing ')' for list instead found {BetterBeAClosedBracket.TokenType} at , ln:{BetterBeAClosedBracket.lineNumber}:{BetterBeAClosedBracket.column}";
                 _logger.LogCritical(msg, nameof(BuildList));
