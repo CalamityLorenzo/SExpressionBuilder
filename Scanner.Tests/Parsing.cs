@@ -2,7 +2,6 @@
 using SExpression.Core.IR;
 using SExpression.Parsing;
 using SExpressions;
-using System.Threading.Tasks.Sources;
 using Xunit.Abstractions;
 
 namespace Compiler.Tests
