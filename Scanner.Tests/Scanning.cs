@@ -18,6 +18,7 @@ namespace Scanner.Tests
         [InlineData("a", 1)]
         [InlineData("1234567", 1)]
         [InlineData("123+4567", 3)]
+        [InlineData("\"123+4567\"", 1)]
         [InlineData("123+4567-123", 5)]
         [InlineData("(+ 123 \"abcdef\" define)", 6)]
         [InlineData("(+ 123 abc (define (= a 2)))", 13)]
@@ -55,15 +56,17 @@ namespace Scanner.Tests
         }
 
         [Theory]
-        [InlineData("\"abcdef\"", 1)]
-        [InlineData("(\"abcdef\")", 3)]
-        [InlineData("(\"ab\" \"cdef\")", 4)]
-        public void ScannerStrings(string input, int tokenCount)
+        [InlineData("(\"abcdef\")", "abcdef")]
+        [InlineData("(\"ab\ncdef\")", "ab\ncdef")]
+        [InlineData("(\"ab\" \"cdef\")", "ab")]
+        [InlineData("(\"123\\+4567\")", "123\\+4567")]
+        public void ScannerStrings(string input, string expected)
         {
             var scanner = new SExpressions.Scanner();
-            var output = scanner.ScanDocument(input);
-            logOutput.WriteLine($"Number of tokens : {output.Count()}");
-            Assert.True(output.Count == tokenCount);
+            var output = scanner.ScanDocument(input).ToList();
+            logOutput.WriteLine($"Scanner :\t{output[1].SourceValue}");
+            logOutput.WriteLine($"Expected :\t{expected}");
+            Assert.True(output[1].SourceValue == expected);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 namespace SExpression.Core.IR
 {
-    public class SExpressionString : SExpression
+    public class SExpressionString : SExpr
     {
         public SExpressionString(string s) : base()
         {

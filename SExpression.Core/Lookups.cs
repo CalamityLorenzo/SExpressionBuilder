@@ -9,29 +9,29 @@ namespace SExpression.Core
     public static class LookUps
     {
         public static HashSet<string> keyWords = new(["if", "define", "else", "cond", "while", "xor", "and", "t", "nil"]);
-        private static Dictionary<string, TokenType> operators = new()
+        private static Dictionary<string, ScannerTokenType> operators = new()
                                                         {
-                                                            {"+",TokenType.Plus },
-                                                            {"+=",TokenType.PlusEquals  },
-                                                            {"-",TokenType.Minus },
-                                                            {"-=",TokenType.MinusEquals  } ,
-                                                            {"*",TokenType.Asterisk },
-                                                            {"*=",TokenType.AsteriskEquals},
-                                                            {"\\",TokenType.BackSlash},
-                                                            {"\\=",TokenType.BackSlashEquals  },
-                                                            {">",TokenType.GreaterThan },
-                                                            {">=",TokenType.GreaterThanEquals  },
-                                                            {"<",TokenType.LessThan},
-                                                            {"<=",TokenType.LessThanEquals  },
-                                                            {"!",TokenType.Ping},
-                                                            {"!=",TokenType.PingEquals  },
-                                                            {"=",TokenType.Ping},
-                                                            {"==",TokenType.PingEquals  },
+                                                            {"+",ScannerTokenType.Plus },
+                                                            {"+=",ScannerTokenType.PlusEquals  },
+                                                            {"-",ScannerTokenType.Minus },
+                                                            {"-=",ScannerTokenType.MinusEquals  } ,
+                                                            {"*",ScannerTokenType.Asterisk },
+                                                            {"*=",ScannerTokenType.AsteriskEquals},
+                                                            {"\\",ScannerTokenType.BackSlash},
+                                                            {"\\=",ScannerTokenType.BackSlashEquals  },
+                                                            {">",ScannerTokenType.GreaterThan },
+                                                            {">=",ScannerTokenType.GreaterThanEquals  },
+                                                            {"<",ScannerTokenType.LessThan},
+                                                            {"<=",ScannerTokenType.LessThanEquals  },
+                                                            {"!",ScannerTokenType.Ping},
+                                                            {"!=",ScannerTokenType.PingEquals  },
+                                                            {"=",ScannerTokenType.Ping},
+                                                            {"==",ScannerTokenType.PingEquals  },
         };
 
 
         public static HashSet<string> Keywords => keyWords;
-        public static Dictionary<string, TokenType> Operators => operators;
+        public static Dictionary<string, ScannerTokenType> Operators => operators;
     }
 
 }

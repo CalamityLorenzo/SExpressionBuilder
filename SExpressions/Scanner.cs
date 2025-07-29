@@ -27,12 +27,12 @@ namespace SExpressions
             return Tokens;
         }
 
-        private ScannerToken CreateToken(TokenType token, string canonicalValue, int startIndex, int length = 1)
+        private ScannerToken CreateToken(SExpression.Core.ScannerTokenType token, string canonicalValue, int startIndex, int length = 1)
         {
             return new(token, canonicalValue, AllChars.Span.Slice(startIndex, length).ToString(), CurrentLine, CurrentColumn);
         }
 
-        private ScannerToken CreateToken(TokenType token, string canonicalValue, int startIndex, int startLine, int startColumn, int length = 1)
+        private ScannerToken CreateToken(SExpression.Core.ScannerTokenType token, string canonicalValue, int startIndex, int startLine, int startColumn, int length = 1)
         {
             return new(token, canonicalValue, AllChars.Span.Slice(startIndex, length).ToString(), startLine, startColumn);
         }
@@ -42,7 +42,7 @@ namespace SExpressions
             switch (currentChar)
             {
                 case ',':
-                    Tokens.Add(CreateToken(TokenType.Comma, ",", CurrentIdx));
+                    Tokens.Add(CreateToken(SExpression.Core.ScannerTokenType.Comma, ",", CurrentIdx));
                     break;
                 case '\n' or '\r':
                     AddNewLine();
@@ -66,16 +66,16 @@ namespace SExpressions
                     ScanString();
                     break;
                 case '(':
-                    Tokens.Add(CreateToken(TokenType.OpenBracket, "(", CurrentIdx));
+                    Tokens.Add(CreateToken(SExpression.Core.ScannerTokenType.OpenBracket, "(", CurrentIdx));
                     break;
                 case ')':
-                    Tokens.Add(CreateToken(TokenType.CloseBracket, ")", CurrentIdx));
+                    Tokens.Add(CreateToken(SExpression.Core.ScannerTokenType.CloseBracket, ")", CurrentIdx));
                     break;
                 case '{':
-                    Tokens.Add(CreateToken(TokenType.OpenBrace, "{", CurrentIdx));
+                    Tokens.Add(CreateToken(SExpression.Core.ScannerTokenType.OpenBrace, "{", CurrentIdx));
                     break;
                 case '}':
-                    Tokens.Add(CreateToken(TokenType.ClosedBrace, "}", CurrentIdx));
+                    Tokens.Add(CreateToken(SExpression.Core.ScannerTokenType.ClosedBrace, "}", CurrentIdx));
                     break;
                 case ' ': break;
                 case char c when char.IsLetter(c):
@@ -111,16 +111,18 @@ namespace SExpressions
             // When we arrrive here we know we have a double quote.
             // Scan the string until we find the terminating quote.
             // eg "grg" but "asdfsdf\"" and ""
-            var startIdx = CurrentIdx;
+            var startIdx = CurrentIdx+1;
             var startColumn = CurrentColumn;
             var peekedChar = Peek();
             // Have we entere4d into an escapted char stream eg \n \t \" etc
-            var escapedChar= false;
-            while (!IsAtEnd() && ((!escapedChar && peekedChar != '"') || (escapedChar && peekedChar =='"' )))
+            var escapeChar= false;
+            while (!IsAtEnd() && ((!escapeChar && peekedChar != '"') || (escapeChar)))
             {
+                if(peekedChar == '\n') this.CurrentLine++;
                 MoveNext();
                 peekedChar = Peek();
-                escapedChar = IsAtEnd() ? false :  GetCurrentChar() == '\\';
+                escapeChar = (GetCurrentChar() == '\\' && !IsAtEnd());
+                
             }
 
             if (IsAtEnd() && GetCurrentChar() != '\"')
@@ -128,7 +130,7 @@ namespace SExpressions
             
             MoveNext(); // Move past the closing quote
             // +1 to include the closing quote in the token length
-            Tokens.Add(CreateToken(TokenType.String, "", startIdx, CurrentLine, startColumn, (CurrentIdx - startIdx) +1));
+            Tokens.Add(CreateToken(SExpression.Core.ScannerTokenType.String, "", startIdx, CurrentLine, startColumn, CurrentIdx - startIdx));
 
         }
 
@@ -145,7 +147,7 @@ namespace SExpressions
             }
             var word = AllChars.Span.Slice(startIdx, ((CurrentIdx+1) - startIdx)).ToString().ToLowerInvariant();
 
-            Tokens.Add(CreateToken(TokenType.Number, word, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx));
+            Tokens.Add(CreateToken(SExpression.Core.ScannerTokenType.Number, word, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx));
         }
 
         private void ScanIdentifierKeyword()
@@ -163,14 +165,14 @@ namespace SExpressions
             if (LookUps.Keywords.TryGetValue(word, out var canonicalValue))
             {
                 Tokens.Add(
-                CreateToken(TokenType.Keyword, canonicalValue, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx)
+                CreateToken(SExpression.Core.ScannerTokenType.Keyword, canonicalValue, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx)
                 );
 
             }
             else
             {
                 Tokens.Add(
-                CreateToken(TokenType.Identifier, word, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx)
+                CreateToken(SExpression.Core.ScannerTokenType.Identifier, word, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx)
                 );
             }
         }
@@ -198,6 +200,14 @@ namespace SExpressions
         private char Peek()
         {
             if (CurrentIdx + 1 < AllChars.Length)
+                return AllChars.Span[CurrentIdx + 1];
+            else
+                return '\0';
+        }
+
+        private char PeekNext()
+        {
+            if (CurrentIdx + 2 < AllChars.Length)
                 return AllChars.Span[CurrentIdx + 1];
             else
                 return '\0';

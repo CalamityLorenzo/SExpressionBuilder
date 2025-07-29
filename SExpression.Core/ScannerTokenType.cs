@@ -1,6 +1,6 @@
 ﻿namespace SExpression.Core
 {
-    public enum TokenType
+    public enum ScannerTokenType
     {
         Comma,
         SemiColon,

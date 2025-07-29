@@ -1,12 +1,12 @@
 ﻿namespace SExpression.Core.IR
 {
-    public class SExpressionList : SExpression
+    public class SExpressionList : SExpr
     {
-        public List<SExpression> Expressions { get; private set; }  
+        public List<SExpr> Expressions { get; private set; }  
 
-        public SExpressionList(IEnumerable<SExpression> expressions)
+        public SExpressionList(IEnumerable<SExpr> expressions)
         {
-            this.Expressions = new List<SExpression>(expressions);
+            this.Expressions = new List<SExpr>(expressions);
             this.IsAtom = false;
             this.Value = "List";
         }

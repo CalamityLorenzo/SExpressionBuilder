@@ -1,6 +1,6 @@
 ﻿namespace SExpression.Core.IR
 {
-    public class SExpressionBoolean : SExpression
+    public class SExpressionBoolean : SExpr
     {
         public SExpressionBoolean(bool value) : base()
         {

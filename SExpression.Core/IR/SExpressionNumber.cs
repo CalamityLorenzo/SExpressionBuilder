@@ -1,6 +1,6 @@
 ﻿namespace SExpression.Core.IR
 {
-    public class SExpressionNumber : SExpression
+    public class SExpressionNumber : SExpr
     {
         public SExpressionNumber(double value) : base()
         {

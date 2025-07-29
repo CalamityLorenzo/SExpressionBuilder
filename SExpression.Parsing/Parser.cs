@@ -19,19 +19,19 @@ namespace SExpression.Parsing
     public class Parser(ILogger<Parser> logger)
     {
         private readonly ILogger<Parser> _logger = logger;
-        private List<Core.IR.SExpression> _SExpressions;
+        private List<Core.IR.SExpr> _SExpressions;
 
-        public Stack<ScannerToken> Tokens { get; private set; }
+        public Stack<SExpressions.ScannerToken> Tokens { get; private set; }
 
-        public List<Core.IR.SExpression> Parse(List<ScannerToken> tokens)
+        public List<Core.IR.SExpr> Parse(List<SExpressions.ScannerToken> tokens)
         {
-            this.Tokens = new Stack<ScannerToken>(tokens.Reverse<ScannerToken>());
+            this.Tokens = new Stack<SExpressions.ScannerToken>(Enumerable.Reverse(tokens));
             return FindProgram();
         }
 
-        private List<Core.IR.SExpression> FindProgram()
+        private List<Core.IR.SExpr> FindProgram()
         {
-            this._SExpressions = new List<Core.IR.SExpression>();
+            this._SExpressions = new List<Core.IR.SExpr>();
             while (this.Tokens.TryPeek(out var peekedToken))
             {
                 _SExpressions.Add(BuildSExpression());
@@ -40,11 +40,11 @@ namespace SExpression.Parsing
             return _SExpressions;
         }
 
-        private Core.IR.SExpression BuildSExpression()
+        private Core.IR.SExpr BuildSExpression()
         {
             var root = this.Tokens.Peek();
 
-            if (root.TokenType == Core.TokenType.OpenBracket)
+            if (root.TokenType == Core.ScannerTokenType.OpenBracket)
             {
                 return BuildList();
             }
@@ -54,22 +54,22 @@ namespace SExpression.Parsing
             }
         }
 
-        private Core.IR.SExpression BuildAtom()
+        private Core.IR.SExpr BuildAtom()
         {
             var current = this.Tokens.Peek();
 
             var Atom = current.TokenType switch
             {
-                Core.TokenType.Number => AtomNumber(),
-                Core.TokenType.String => AtomString(),
-                Core.TokenType a when a == Core.TokenType.Keyword && (current.Value == "t" || current.Value == "nil") => AtomBoolean(),
+                Core.ScannerTokenType.Number => AtomNumber(),
+                Core.ScannerTokenType.String => AtomString(),
+                Core.ScannerTokenType a when a == Core.ScannerTokenType.Keyword && (current.Value == "t" || current.Value == "nil") => AtomBoolean(),
                 _ => AtomSymbol()
             };
             return Atom;
 
         }
 
-        private Core.IR.SExpression AtomSymbol()
+        private Core.IR.SExpr AtomSymbol()
         {
             var symbolToken = this.Tokens.Pop();
 
@@ -78,17 +78,17 @@ namespace SExpression.Parsing
             // A Keyword
             return symbolToken.TokenType switch
             {
-                Core.TokenType.Keyword => new SExpressionSymbolKeyword(symbolToken.Value),
-                Core.TokenType.Identifier => new SExpressionSymbolIdentifier(symbolToken.Value),
-                Core.TokenType ops when LookUps.Operators.ContainsKey(symbolToken.SourceValue) => new SExpressionSymbolOperator(symbolToken.SourceValue),
+                Core.ScannerTokenType.Keyword => new SExpressionSymbolKeyword(symbolToken.Value),
+                Core.ScannerTokenType.Identifier => new SExpressionSymbolIdentifier(symbolToken.Value),
+                Core.ScannerTokenType ops when LookUps.Operators.ContainsKey(symbolToken.SourceValue) => new SExpressionSymbolOperator(symbolToken.SourceValue),
                 _ => throw new ParserException($"Atom Symbol type not found {symbolToken.Value}")
             };
 
         }
-        private Core.IR.SExpression AtomBoolean()
+        private Core.IR.SExpr AtomBoolean()
         {
             var booleanToken = this.Tokens.Pop();
-            if (booleanToken.TokenType != Core.TokenType.Keyword && (booleanToken.Value != "t" || booleanToken.Value != "nil"))
+            if (booleanToken.TokenType != Core.ScannerTokenType.Keyword && (booleanToken.Value != "t" || booleanToken.Value != "nil"))
             {
                 var msg = $"Expected a boolean but found {booleanToken.TokenType} at ln:{booleanToken.lineNumber}:{booleanToken.column}";
                 _logger.LogCritical(msg, nameof(AtomBoolean));
@@ -98,31 +98,23 @@ namespace SExpression.Parsing
             return new SExpressionBoolean(booleanToken.Value == "t");
         }
 
-        private Core.IR.SExpression AtomString()
+        private Core.IR.SExpr AtomString()
         {
             var stringToken = this.Tokens.Pop();
-            if (stringToken.TokenType != Core.TokenType.String)
+            if (stringToken.TokenType != Core.ScannerTokenType.String)
             {
                 var msg = $"Expected a string but found {stringToken.TokenType} at ln:{stringToken.lineNumber}:{stringToken.column}";
                 _logger.LogCritical(msg, nameof(AtomString));
                 throw new SExpression.ParserException(msg);
             }
-            // Process the string token as needed
-            if (stringToken.SourceValue == "\"\"") // The empty string case
-            {
-                return new SExpressionString(String.Empty);
-            }
-            else
-            {
-                return new SExpressionString(stringToken.SourceValue.AsSpan(1, stringToken.SourceValue.Length - 2).ToString());
-            }
-
+        
+            return new SExpressionString(stringToken.SourceValue);
         }
 
-        private Core.IR.SExpression AtomNumber()
+        private Core.IR.SExpr AtomNumber()
         {
             var numberToken = this.Tokens.Pop();
-            if (numberToken.TokenType != Core.TokenType.Number)
+            if (numberToken.TokenType != Core.ScannerTokenType.Number)
             {
                 var msg = $"Expected a number but found {numberToken.TokenType} at ln:{numberToken.lineNumber}:{numberToken.column}";
                 _logger.LogCritical(msg, nameof(AtomNumber));
@@ -132,24 +124,24 @@ namespace SExpression.Parsing
             return new SExpressionNumber(numberToken.Value);
         }
 
-        private Core.IR.SExpression BuildList()
+        private Core.IR.SExpr BuildList()
         {
             var BetterBeAOpenBracket = this.Tokens.Pop();
-            if (BetterBeAOpenBracket.TokenType != Core.TokenType.OpenBracket)
+            if (BetterBeAOpenBracket.TokenType != Core.ScannerTokenType.OpenBracket)
             {
                 var msg = $"Expected opening '(' for list instead found {BetterBeAOpenBracket.TokenType} at , ln:{BetterBeAOpenBracket.lineNumber}:{BetterBeAOpenBracket.column}";
                 _logger.LogCritical(msg, nameof(BuildList));
                 throw new SExpression.ParserException(msg);
             }
 
-            List<Core.IR.SExpression> expressions = new List<Core.IR.SExpression>();
-            while (this.Tokens.Peek().TokenType != Core.TokenType.CloseBracket)
+            List<Core.IR.SExpr> expressions = new List<Core.IR.SExpr>();
+            while (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
             {
                 expressions.Add(BuildSExpression());
             }
 
             var BetterBeAClosedBracket = this.Tokens.Pop();
-            if (BetterBeAClosedBracket.TokenType != Core.TokenType.CloseBracket)
+            if (BetterBeAClosedBracket.TokenType != Core.ScannerTokenType.CloseBracket)
             {
                 var msg = $"Expected closing ')' for list instead found {BetterBeAClosedBracket.TokenType} at , ln:{BetterBeAClosedBracket.lineNumber}:{BetterBeAClosedBracket.column}";
                 _logger.LogCritical(msg, nameof(BuildList));

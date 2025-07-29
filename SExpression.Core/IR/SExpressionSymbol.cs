@@ -2,7 +2,7 @@
 
 namespace SExpression.Core.IR
 {
-    public class SExpressionSymbol : SExpression
+    public class SExpressionSymbol : SExpr
     {
         public virtual SymbolType Symbol { get; }
         bool IsKeyword { get; init; }
