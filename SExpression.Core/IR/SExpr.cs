@@ -6,8 +6,10 @@ namespace SExpression.Core.IR
     {
         public string Value { get; init; } = string.Empty;
         public bool IsAtom { get; init; } = true;
+
+        public abstract void Apply(IExternalAction action);
     }
 
-    
+
 
 }

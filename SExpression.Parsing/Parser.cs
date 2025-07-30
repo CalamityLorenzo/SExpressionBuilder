@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SExpression.Core;
 using SExpression.Core.IR;
-using SExpressions;
-using System.Linq.Expressions;
 
 namespace SExpression.Parsing
 {
@@ -95,7 +93,7 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
             // Process the boolean token as needed
-            return new SExpressionBoolean(booleanToken.Value == "t");
+            return new SExprBoolean(booleanToken.Value == "t");
         }
 
         private Core.IR.SExpr AtomString()
@@ -107,8 +105,8 @@ namespace SExpression.Parsing
                 _logger.LogCritical(msg, nameof(AtomString));
                 throw new SExpression.ParserException(msg);
             }
-        
-            return new SExpressionString(stringToken.SourceValue);
+
+            return new SExprString(stringToken.SourceValue);
         }
 
         private Core.IR.SExpr AtomNumber()
@@ -121,7 +119,7 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
             // Process the number token as needed
-            return new SExpressionNumber(numberToken.Value);
+            return new SExprNumber(numberToken.Value);
         }
 
         private Core.IR.SExpr BuildList()
@@ -147,7 +145,7 @@ namespace SExpression.Parsing
                 _logger.LogCritical(msg, nameof(BuildList));
                 throw new SExpression.ParserException(msg);
             }
-            return new SExpressionList(expressions);
+            return new SExprList(expressions);
         }
     }
 }

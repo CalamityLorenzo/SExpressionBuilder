@@ -1,16 +1,16 @@
 ﻿namespace SExpression.Core.IR
 {
-    public class SExpressionNumber : SExpr
+    public class SExprNumber : SExpr
     {
-        public SExpressionNumber(double value) : base()
+        public SExprNumber(double value) : base()
         {
             this.Value = value.ToString();
         }
-        public SExpressionNumber() : base()
+        public SExprNumber() : base()
         {
             this.Value = "0";
         }
-        public SExpressionNumber(string value) : base()
+        public SExprNumber(string value) : base()
         {
             if (!double.TryParse(value, out _))
             {
@@ -22,6 +22,11 @@
         public override string ToString()
         {
             return this.Value ?? "0";
+        }
+
+        public override void Apply(IExternalAction action)
+        {
+            action.VisitAtom(this);
         }
     }
 }
