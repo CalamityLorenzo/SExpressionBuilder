@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SExpression.Core;
 using SExpression.Core.IR;
-using SExpressions;
-using System.Linq.Expressions;
 
 namespace SExpression.Parsing
 {
@@ -107,7 +105,7 @@ namespace SExpression.Parsing
                 _logger.LogCritical(msg, nameof(AtomString));
                 throw new SExpression.ParserException(msg);
             }
-        
+
             return new SExpressionString(stringToken.SourceValue);
         }
 
@@ -134,20 +132,50 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
 
-            List<Core.IR.SExpr> expressions = new List<Core.IR.SExpr>();
-            while (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
+            if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
             {
-                expressions.Add(BuildSExpression());
+                var ListHead = new SExpressionListNode();
+                var listPointer = ListHead;
+                listPointer.CurrentValue = BuildSExpression();
+                // We are into the list here
+                while(Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
+                {
+                    var thisIteration = new SExpressionListNode();
+                    thisIteration.CurrentValue = BuildSExpression();
+                    
+                    if(Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket){
+                        thisIteration.Next = new SExpressionListNode()
+                        {
+                            CurrentValue = BuildSExpression()
+                        };
+                    }
+                    else // Pop over the closing bracket
+                    {
+                        thisIteration.Next = new SExpressionBoolean(false);
+                        break;
+                    }
+                    listPointer.Next = thisIteration;
+                    listPointer = thisIteration;
+                }
+                if (Tokens.Peek().TokenType == Core.ScannerTokenType.CloseBracket)
+                    Tokens.Pop();
+
+                return new SExpressionList(ListHead);
+            }
+            else
+            {
+                Tokens.Pop();
+                return new SExpressionList(new SExpressionBoolean(false));
             }
 
-            var BetterBeAClosedBracket = this.Tokens.Pop();
-            if (BetterBeAClosedBracket.TokenType != Core.ScannerTokenType.CloseBracket)
-            {
-                var msg = $"Expected closing ')' for list instead found {BetterBeAClosedBracket.TokenType} at , ln:{BetterBeAClosedBracket.lineNumber}:{BetterBeAClosedBracket.column}";
-                _logger.LogCritical(msg, nameof(BuildList));
-                throw new SExpression.ParserException(msg);
-            }
-            return new SExpressionList(expressions);
+            //var BetterBeAClosedBracket = this.Tokens.Pop();
+            //if (BetterBeAClosedBracket.TokenType != Core.ScannerTokenType.CloseBracket)
+            //{
+            //    var msg = $"Expected closing ')' for list instead found {BetterBeAClosedBracket.TokenType} at , ln:{BetterBeAClosedBracket.lineNumber}:{BetterBeAClosedBracket.column}";
+            //    _logger.LogCritical(msg, nameof(BuildList));
+            //    throw new SExpression.ParserException(msg);
+            //}
+            //return new SExpressionList(expressions);
         }
     }
 }
