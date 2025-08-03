@@ -1,16 +1,16 @@
 ﻿namespace SExpression.Core.IR
 {
-    public class SExpressionBoolean : SExpr
+    public class SExprBoolean : SExpr
     {
-        public SExpressionBoolean(bool value) : base()
+        public SExprBoolean(bool value) : base()
         {
             this.Value = value ? "t" : "nil";
         }
-        public SExpressionBoolean() : base()
+        public SExprBoolean() : base()
         {
             this.Value = "nil";
         }
-        public SExpressionBoolean(string value) : base()
+        public SExprBoolean(string value) : base()
         {
             if (value != "t" && value != "nil")
             {
@@ -22,6 +22,11 @@
         public override string ToString()
         {
             return this.Value ?? "nil";
+        }
+
+        public override void Apply(IExternalAction action)
+        {
+            action.VisitAtom(this);
         }
     }
 }

@@ -93,7 +93,7 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
             // Process the boolean token as needed
-            return new SExpressionBoolean(booleanToken.Value == "t");
+            return new SExprBoolean(booleanToken.Value == "t");
         }
 
         private Core.IR.SExpr AtomString()
@@ -105,6 +105,8 @@ namespace SExpression.Parsing
                 _logger.LogCritical(msg, nameof(AtomString));
                 throw new SExpression.ParserException(msg);
             }
+
+            return new SExprString(stringToken.SourceValue);
 
             return new SExpressionString(stringToken.SourceValue);
         }
@@ -119,7 +121,7 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
             // Process the number token as needed
-            return new SExpressionNumber(numberToken.Value);
+            return new SExprNumber(numberToken.Value);
         }
 
         private Core.IR.SExpr BuildList()
@@ -167,15 +169,7 @@ namespace SExpression.Parsing
                 Tokens.Pop();
                 return new SExpressionList(new SExpressionBoolean(false));
             }
-
-            //var BetterBeAClosedBracket = this.Tokens.Pop();
-            //if (BetterBeAClosedBracket.TokenType != Core.ScannerTokenType.CloseBracket)
-            //{
-            //    var msg = $"Expected closing ')' for list instead found {BetterBeAClosedBracket.TokenType} at , ln:{BetterBeAClosedBracket.lineNumber}:{BetterBeAClosedBracket.column}";
-            //    _logger.LogCritical(msg, nameof(BuildList));
-            //    throw new SExpression.ParserException(msg);
-            //}
-            //return new SExpressionList(expressions);
+            return new SExpressionList(expressions);
         }
     }
 }
