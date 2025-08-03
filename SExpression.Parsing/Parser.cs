@@ -133,34 +133,12 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
 
+
             if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
             {
-                var ListHead = new SExprListNode();
-                var listPointer = ListHead;
-                listPointer.CurrentValue = BuildSExpression();
+                var ListHead = new SExprListNode(BuildSExpression());
                 // We are into the list here
-                while(Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
-                {
-                    var thisIteration = new SExprListNode();
-                    thisIteration.CurrentValue = BuildSExpression();
-                    
-                    if(Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket){
-                        thisIteration.Next = new SExprListNode()
-                        {
-                            CurrentValue = BuildSExpression()
-                        };
-                    }
-                    else // Pop over the closing bracket
-                    {
-                        thisIteration.Next = new SExprBoolean(false);
-                        break;
-                    }
-                    listPointer.Next = thisIteration;
-                    listPointer = thisIteration;
-                }
-                if (Tokens.Peek().TokenType == Core.ScannerTokenType.CloseBracket)
-                    Tokens.Pop();
-
+                BuildListNodes(ListHead);
                 return new SExprList(ListHead);
             }
             else
@@ -168,6 +146,30 @@ namespace SExpression.Parsing
                 Tokens.Pop();
                 return new SExprList(new SExprBoolean(false));
             }
+        }
+        /// <summary>
+        /// If we are here, we know the first token is not a closed bracket
+        /// </summary>
+        /// <param name="listPointer"></param>
+        /// <exception cref="ParserException"></exception>
+        private void BuildListNodes(SExprListNode listPointer)
+        {
+            if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
+            {
+                listPointer.Next = new SExprListNode()
+                {
+                    CurrentValue = BuildSExpression(),
+                };
+                BuildListNodes(listPointer.Next as SExprListNode);
+
+            }
+            else
+            {
+                listPointer.Next = new SExprBoolean(false);
+                Tokens.Pop();
+                return;
+            }
+
         }
     }
 }

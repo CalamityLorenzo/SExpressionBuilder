@@ -23,6 +23,10 @@ namespace SExpression.Core.IR
     public class SExprListNode : SExpr
     {
         public SExprListNode() { }
+        public SExprListNode(SExpr Current) {
+            this.CurrentValue = Current;
+            this.Value = CurrentValue.Value;
+        }
         public SExprListNode(SExpr Current, SExpr Next)
         {
             this.CurrentValue = Current;

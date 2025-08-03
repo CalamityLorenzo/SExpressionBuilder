@@ -36,6 +36,20 @@ namespace Compiler.Tests
         }
 
         [Theory]
+        [InlineData("(+ 123)", 5)]
+        [InlineData("(+ 123 \"abcdef\")", 5)]
+        [InlineData("(+ 123 \"abcdef\" 567)", 5)]
+        [InlineData("(+ 123 \"abcdef\" (+ 2 (* 4 4)))", 5)]
+        public void ParserNestedStructure(string input, int tokenCount)
+        {
+            var fakeLogger = new FakeLogger<Parser>();
+            var scannerTokens = ScannerSetup(input);
+            var parser = new SExpression.Parsing.Parser(fakeLogger);
+            var parserOutput = parser.Parse(scannerTokens.ToList());
+
+        }
+
+        [Theory]
         [InlineData("(\"abcdef\")", "abcdef")]
         [InlineData("(\"\")", "")]
         [InlineData("(\"1\")", "1")]
