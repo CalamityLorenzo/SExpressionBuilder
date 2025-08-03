@@ -38,9 +38,10 @@ namespace Compiler.Tests
         [Theory]
         [InlineData("(+ 123)", 5)]
         [InlineData("(+ 123 \"abcdef\")", 5)]
+        [InlineData("(+ 123 (12 12) \"abcdef\")", 5)]
         [InlineData("(+ 123 \"abcdef\" 567)", 5)]
         [InlineData("(+ 123 \"abcdef\" (+ 2 (* 4 4)))", 5)]
-        public void ParserNestedStructure(string input, int tokenCount)
+        public void ParserStructure(string input, int tokenCount)
         {
             var fakeLogger = new FakeLogger<Parser>();
             var scannerTokens = ScannerSetup(input);
