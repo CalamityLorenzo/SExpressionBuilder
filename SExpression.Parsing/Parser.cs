@@ -6,7 +6,8 @@ namespace SExpression.Parsing
 {
 
     // <program>       ::= <expression>*
-    // <expression>    ::= <atom> | <list>
+    // <expression>    ::= <atom> | <list> | <comment>
+    // <comment>       ::= "; ".*
     // <atom>          ::= <number> | <symbol> | <string> | <boolean>
     // <number>        ::= [0-9]+
     // <symbol>        ::= [a-zA-Z_+\-*/=<>!?]+
@@ -42,14 +43,12 @@ namespace SExpression.Parsing
         {
             var root = this.Tokens.Peek();
 
-            if (root.TokenType == Core.ScannerTokenType.OpenBracket)
+            return root.TokenType switch
             {
-                return BuildList();
-            }
-            else
-            {
-                return BuildAtom();
-            }
+                ScannerTokenType.OpenBrace => BuildList(),
+                _ => BuildAtom()
+            };
+            
         }
 
         private Core.IR.SExpr BuildAtom()
@@ -147,11 +146,7 @@ namespace SExpression.Parsing
                 return new SExprList(new SExprBoolean(false));
             }
         }
-        /// <summary>
-        /// If we are here, we know the first token is not a closed bracket
-        /// </summary>
-        /// <param name="listPointer"></param>
-        /// <exception cref="ParserException"></exception>
+ 
         private void BuildListNodes(SExprListNode listPointer)
         {
             if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
@@ -161,7 +156,6 @@ namespace SExpression.Parsing
                     CurrentValue = BuildSExpression(),
                 };
                 BuildListNodes(listPointer.Next as SExprListNode);
-
             }
             else
             {
