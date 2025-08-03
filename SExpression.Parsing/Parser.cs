@@ -108,7 +108,6 @@ namespace SExpression.Parsing
 
             return new SExprString(stringToken.SourceValue);
 
-            return new SExpressionString(stringToken.SourceValue);
         }
 
         private Core.IR.SExpr AtomNumber()
@@ -136,24 +135,24 @@ namespace SExpression.Parsing
 
             if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
             {
-                var ListHead = new SExpressionListNode();
+                var ListHead = new SExprListNode();
                 var listPointer = ListHead;
                 listPointer.CurrentValue = BuildSExpression();
                 // We are into the list here
                 while(Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
                 {
-                    var thisIteration = new SExpressionListNode();
+                    var thisIteration = new SExprListNode();
                     thisIteration.CurrentValue = BuildSExpression();
                     
                     if(Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket){
-                        thisIteration.Next = new SExpressionListNode()
+                        thisIteration.Next = new SExprListNode()
                         {
                             CurrentValue = BuildSExpression()
                         };
                     }
                     else // Pop over the closing bracket
                     {
-                        thisIteration.Next = new SExpressionBoolean(false);
+                        thisIteration.Next = new SExprBoolean(false);
                         break;
                     }
                     listPointer.Next = thisIteration;
@@ -162,14 +161,13 @@ namespace SExpression.Parsing
                 if (Tokens.Peek().TokenType == Core.ScannerTokenType.CloseBracket)
                     Tokens.Pop();
 
-                return new SExpressionList(ListHead);
+                return new SExprList(ListHead);
             }
             else
             {
                 Tokens.Pop();
-                return new SExpressionList(new SExpressionBoolean(false));
+                return new SExprList(new SExprBoolean(false));
             }
-            return new SExpressionList(expressions);
         }
     }
 }

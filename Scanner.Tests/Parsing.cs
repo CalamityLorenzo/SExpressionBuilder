@@ -47,11 +47,11 @@ namespace Compiler.Tests
             var scannerTokens = ScannerSetup(input);
             var parser = new SExpression.Parsing.Parser(fakeLogger);
             var parserOutput = parser.Parse(scannerTokens.ToList());
-            var stringOutput = (parserOutput.First() as SExpressionList).Expressions[0] as SExpressionString;
+            var stringOutput = (parserOutput.First() as SExprList).Value;
 
             logOutput.WriteLine($"Does they do the match: {stringOutput == expectedValue.Value}");
             logOutput.WriteLine($"input:\t{stringOutput}");
-            logOutput.WriteLine($"output:\t{expectedValue.Value}");
+            logOutput.WriteLine($"output:\t{expectedValue}");
             Assert.True(stringOutput == expectedValue.Value);
         }
     }
