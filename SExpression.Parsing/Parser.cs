@@ -6,8 +6,7 @@ namespace SExpression.Parsing
 {
 
     // <program>       ::= <expression>*
-    // <expression>    ::= <atom> | <list> | <comment>
-    // <comment>       ::= "; ".*
+    // <expression>    ::= <atom> | <list> 
     // <atom>          ::= <number> | <symbol> | <string> | <boolean>
     // <number>        ::= [0-9]+
     // <symbol>        ::= [a-zA-Z_+\-*/=<>!?]+
@@ -45,7 +44,7 @@ namespace SExpression.Parsing
 
             return root.TokenType switch
             {
-                ScannerTokenType.OpenBrace => BuildList(),
+                ScannerTokenType.OpenBracket => BuildList(),
                 _ => BuildAtom()
             };
             
@@ -131,7 +130,6 @@ namespace SExpression.Parsing
                 _logger.LogCritical(msg, nameof(BuildList));
                 throw new SExpression.ParserException(msg);
             }
-
 
             if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
             {

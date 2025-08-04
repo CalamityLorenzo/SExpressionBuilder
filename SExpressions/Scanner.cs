@@ -122,7 +122,6 @@ namespace SExpressions
                 MoveNext();
                 peekedChar = Peek();
                 escapeChar = (GetCurrentChar() == '\\' && !IsAtEnd());
-                
             }
 
             if (IsAtEnd() && GetCurrentChar() != '\"')
