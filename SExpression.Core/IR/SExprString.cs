@@ -5,7 +5,6 @@ namespace SExpression.Core.IR
     {
         public SExprString(string s) : base()
         {
-
             this.Value = s ?? throw new ArgumentNullException($"Cannot pass a null string! SExpressionString Constructor");
         }
 

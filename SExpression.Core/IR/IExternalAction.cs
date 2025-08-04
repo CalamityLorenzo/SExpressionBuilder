@@ -8,5 +8,7 @@
         public void VisitAtom(SExprString @string);
         public void VisitAtom(SExprBoolean boolean);
         public void VisitProgram(SExprProgram action);
+        public void VisitListNode(SExprListNode action);
+        public void VisitListNode(SExprBoolean action);
     }
 }

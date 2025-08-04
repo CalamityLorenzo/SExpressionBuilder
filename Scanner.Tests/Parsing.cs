@@ -22,6 +22,7 @@ namespace Compiler.Tests
         }
 
         [Theory]
+        [InlineData("(456 789 123)", 3)]
         [InlineData("(\"abcdef\")", 3)]
         [InlineData("(+ 123 \"abcdef\" define)", 6)]
         [InlineData("(+ 123 \"abcdef\")(- 444 2222)", 5)]
@@ -47,7 +48,6 @@ namespace Compiler.Tests
             var scannerTokens = ScannerSetup(input);
             var parser = new SExpression.Parsing.Parser(fakeLogger);
             var parserOutput = parser.Parse(scannerTokens.ToList());
-
         }
 
         [Theory]
@@ -63,11 +63,44 @@ namespace Compiler.Tests
             var parser = new SExpression.Parsing.Parser(fakeLogger);
             var parserOutput = parser.Parse(scannerTokens.ToList());
             var stringOutput = (parserOutput.First() as SExprList).Value;
-
             logOutput.WriteLine($"Does they do the match: {stringOutput == expectedValue.Value}");
             logOutput.WriteLine($"input:\t{stringOutput}");
             logOutput.WriteLine($"output:\t{expectedValue}");
             Assert.True(stringOutput == expectedValue.Value);
+        }
+
+        [Fact]
+        public void EnumerateListNodes()
+        {
+            string[] source = ["(+ 123 \"abcdef\")", "(+ 123 (12 12) \"abcdef\")"];
+            var fakeLogger = new FakeLogger<Parser>();
+            foreach (var src in source)
+            {
+                var scannerTokens = ScannerSetup(src);
+                var parser = new SExpression.Parsing.Parser(fakeLogger);
+                var parserOutput = parser.Parse(scannerTokens.ToList());
+                var list = parserOutput[0] as SExprList;
+
+                foreach (var node in list!)
+                {
+                    logOutput.WriteLine(node.ToString());
+                    if(node is SExprListNode)
+                    {
+                        var nodeData = (node as SExprListNode).CurrentValue;
+                        if(nodeData is SExprList)
+                        {
+                            foreach (var node2 in (nodeData as SExprList))
+                            {
+                                logOutput.WriteLine($"\tnode2.ToString()");
+                            }
+                            logOutput.WriteLine("SUB Complete\n============\n\n");
+
+                        }
+                    }
+                }
+                 logOutput.WriteLine("List Complete\n============\n\n");
+            }
+
         }
     }
 }

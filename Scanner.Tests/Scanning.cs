@@ -44,6 +44,19 @@ namespace Scanner.Tests
             Assert.True(output[element].column == col);
         }
 
+        [Theory]
+        [InlineData("123", "123")]
+        [InlineData("456", "456")]
+        [InlineData("123.123", "123.123")]
+        [InlineData("123.00000123", "123.00000123")]
+        public void Numbers(string input, string result)
+        {
+            var scanner = new SExpressions.Scanner();
+            var output = scanner.ScanDocument(input);
+            
+            Assert.True(output[0].Value == result);
+        }
+
 
         [Theory]
         [InlineData("123+4567", 3)]

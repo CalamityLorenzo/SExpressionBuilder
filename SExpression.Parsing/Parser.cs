@@ -33,7 +33,6 @@ namespace SExpression.Parsing
             while (this.Tokens.TryPeek(out var peekedToken))
             {
                 _SExpressions.Add(BuildSExpression());
-
             }
             return _SExpressions;
         }
@@ -133,9 +132,10 @@ namespace SExpression.Parsing
 
             if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
             {
-                var ListHead = new SExprListNode(BuildSExpression());
-                // We are into the list here
-                BuildListNodes(ListHead);
+                // Recursive function
+                var ListHead = new SExprListNode(
+                            BuildSExpression(), 
+                            BuildListNodes());
                 return new SExprList(ListHead);
             }
             else
@@ -145,21 +145,19 @@ namespace SExpression.Parsing
             }
         }
  
-        private void BuildListNodes(SExprListNode listPointer)
+        private Core.IR.SExpr BuildListNodes()
         {
             if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
             {
-                listPointer.Next = new SExprListNode()
+                return new SExprListNode(BuildSExpression())
                 {
-                    CurrentValue = BuildSExpression(),
+                    Next = BuildListNodes()
                 };
-                BuildListNodes(listPointer.Next as SExprListNode);
             }
             else
             {
-                listPointer.Next = new SExprBoolean(false);
                 Tokens.Pop();
-                return;
+                return new SExprBoolean(false);
             }
 
         }

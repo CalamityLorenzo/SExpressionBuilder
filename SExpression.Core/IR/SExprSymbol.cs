@@ -5,7 +5,6 @@ namespace SExpression.Core.IR
     public abstract class SExprSymbol : SExpr
     {
         public virtual SymbolType Symbol { get; }
-        bool IsKeyword { get; init; }
 
         public SExprSymbol(string name) : base()
         {
@@ -36,7 +35,7 @@ namespace SExpression.Core.IR
 
     public class SExpressionSymbolOperator : SExprSymbol
     {
-        public override SymbolType Symbol => SymbolType.Identifier;
+        public override SymbolType Symbol => SymbolType.Operator;
         public SExpressionSymbolOperator(string value) : base(value)
         {
         }

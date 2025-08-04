@@ -104,21 +104,21 @@ namespace SExpressions
                     }
                     break;
             }
-       }
+        }
 
         private void ScanString()
         {
             // When we arrrive here we know we have a double quote.
             // Scan the string until we find the terminating quote.
             // eg "grg" but "asdfsdf\"" and ""
-            var startIdx = CurrentIdx+1;
+            var startIdx = CurrentIdx + 1;
             var startColumn = CurrentColumn;
             var peekedChar = Peek();
-            // Have we entere4d into an escapted char stream eg \n \t \" etc
-            var escapeChar= false;
+            // Have we entered into an escapted char stream eg \n \t \" etc
+            var escapeChar = false;
             while (!IsAtEnd() && ((!escapeChar && peekedChar != '"') || (escapeChar)))
             {
-                if(peekedChar == '\n') this.CurrentLine++;
+                if (peekedChar == '\n') this.CurrentLine++;
                 MoveNext();
                 peekedChar = Peek();
                 escapeChar = (GetCurrentChar() == '\\' && !IsAtEnd());
@@ -126,26 +126,23 @@ namespace SExpressions
 
             if (IsAtEnd() && GetCurrentChar() != '\"')
                 throw new ScannerException($"{nameof(ScanString)} Reached end of input, expected terminating \"");
-            
+
             MoveNext(); // Move past the closing quote
             // +1 to include the closing quote in the token length
             Tokens.Add(CreateToken(SExpression.Core.ScannerTokenType.String, "", startIdx, CurrentLine, startColumn, CurrentIdx - startIdx));
-
         }
 
         private void ScanNumber()
         {
-
             // When we arrrive here we know we have a number already.
             // So I'm trying to ensur what's next
             var startIdx = CurrentIdx;
             var startColumn = CurrentColumn;
-            while (!IsAtEnd() && char.IsDigit(Peek()))
+            while (!IsAtEnd() && (char.IsDigit(Peek()) || (Peek() == '.' && char.IsDigit(PeekNext()))))
             {
                 MoveNext();
             }
-            var word = AllChars.Span.Slice(startIdx, ((CurrentIdx+1) - startIdx)).ToString().ToLowerInvariant();
-
+            var word = AllChars.Span.Slice(startIdx, ((CurrentIdx + 1) - startIdx)).ToString().ToLowerInvariant();
             Tokens.Add(CreateToken(SExpression.Core.ScannerTokenType.Number, word, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx));
         }
 
@@ -159,7 +156,7 @@ namespace SExpressions
                 MoveNext();
             }
 
-            var word = AllChars.Span.Slice(startIdx, ((CurrentIdx+1) - startIdx)).ToString().ToLowerInvariant();
+            var word = AllChars.Span.Slice(startIdx, ((CurrentIdx + 1) - startIdx)).ToString().ToLowerInvariant();
 
             if (LookUps.Keywords.TryGetValue(word, out var canonicalValue))
             {
@@ -207,7 +204,7 @@ namespace SExpressions
         private char PeekNext()
         {
             if (CurrentIdx + 2 < AllChars.Length)
-                return AllChars.Span[CurrentIdx + 1];
+                return AllChars.Span[CurrentIdx + 2];
             else
                 return '\0';
         }
