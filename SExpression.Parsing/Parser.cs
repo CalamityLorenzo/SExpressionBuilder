@@ -137,7 +137,10 @@ namespace SExpression.Parsing
             if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
             {
                 counter++;
-                return new SExprListNode(BuildSExpression())
+                var currentNode = BuildSExpression();
+                if (currentNode is SExpressionSymbolOperator)
+                    throw new ParserException("Operator must be the first operation of a list.");
+                return new SExprListNode()
                 {
                     Next = BuildListNodes(ref counter)
                 };
