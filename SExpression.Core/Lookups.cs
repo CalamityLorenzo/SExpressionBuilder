@@ -8,7 +8,7 @@ namespace SExpression.Core
 {
     public static class LookUps
     {
-        public static HashSet<string> keyWords = new([";", "if", "define", "else", "cond", "while", "xor", "and", "t", "nil"]);
+        public static HashSet<string> keyWords = new(["if", "define", "else", "cond", "while", "xor", "and", "t", "nil", "list", "setv", "and"]);
         private static Dictionary<string, ScannerTokenType> operators = new()
                                                         {
                                                             {"+",ScannerTokenType.Plus },
@@ -17,8 +17,8 @@ namespace SExpression.Core
                                                             {"-=",ScannerTokenType.MinusEquals  } ,
                                                             {"*",ScannerTokenType.Asterisk },
                                                             {"*=",ScannerTokenType.AsteriskEquals},
-                                                            {"\\",ScannerTokenType.BackSlash},
-                                                            {"\\=",ScannerTokenType.BackSlashEquals  },
+                                                            {"/",ScannerTokenType.ForwardSlash},
+                                                            {"\\=",ScannerTokenType.ForwardSlashEquals},
                                                             {">",ScannerTokenType.GreaterThan },
                                                             {">=",ScannerTokenType.GreaterThanEquals  },
                                                             {"<",ScannerTokenType.LessThan},

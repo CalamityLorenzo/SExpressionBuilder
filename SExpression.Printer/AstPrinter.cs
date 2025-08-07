@@ -6,50 +6,55 @@ namespace SExpression.Printer
 {
     public class AstPrinter : IExternalAction
     {
-        private readonly ILogger logger;
+        private readonly Action<string> writer;
 
         public AstPrinter(ILogger logger)
         {
-            this.logger = logger;
+            writer= (str)=> writer(str);
         }
+        public AstPrinter(Action<string> toWrite)
+        {
+            writer = toWrite;
+        }
+
         public void VisitAtom(SExprNumber number)
         {
-            logger.LogTrace(number.Value);
+            writer($"{number.Value} ");
         }
 
         public void VisitAtom(SExprSymbol symbol)
         {
-            logger.LogTrace(symbol.Value);
+            writer($"{symbol.Value} ");
 
         }
 
         public void VisitAtom(SExprString @string)
         {
-            logger.LogTrace(@string.Value);
+            writer($"{@string.Value} ");
         }
 
         public void VisitAtom(SExprBoolean boolean)
         {
-            logger.LogTrace(boolean.Value);
+            writer($"{boolean.Value} ");
         }
 
 
         public void VisitProgram(SExprProgram action)
         {
-            logger.LogTrace("Program Start\n");
+            writer("Program Start\n");
             var counter = 1;
             foreach (var express in action.Expressions)
             {
-                logger.LogTrace($"{counter} : ");
+                writer($"{counter} : ");
                 express.Apply(this);
                 counter++;
             }
         }
         public void VisitList(SExprList list)
         {
-            logger.LogTrace($"(");
-            list.Elements.Apply(this);
-            logger.LogTrace("\n)");
+            writer($"\t\n(");
+            list.Head.Apply(this);
+            writer(")");
         }
 
         public void VisitListNode(SExprListNode action)
@@ -60,8 +65,7 @@ namespace SExpression.Printer
 
         public void VisitListNode(SExprBoolean action)
         {
-            logger.LogTrace(action.Value);
-            logger.LogTrace("List End");
+            writer($"{action.Value}");
         }
     }
 }

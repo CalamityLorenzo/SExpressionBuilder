@@ -46,7 +46,7 @@ namespace SExpression.Parsing
                 ScannerTokenType.OpenBracket => BuildList(),
                 _ => BuildAtom()
             };
-            
+
         }
 
         private Core.IR.SExpr BuildAtom()
@@ -67,8 +67,6 @@ namespace SExpression.Parsing
         private Core.IR.SExpr AtomSymbol()
         {
             var symbolToken = this.Tokens.Pop();
-
-            // can be
 
             // A Keyword
             return symbolToken.TokenType switch
@@ -129,29 +127,19 @@ namespace SExpression.Parsing
                 _logger.LogCritical(msg, nameof(BuildList));
                 throw new SExpression.ParserException(msg);
             }
-
-            if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
-            {
-                // Recursive function
-                var ListHead = new SExprListNode(
-                            BuildSExpression(), 
-                            BuildListNodes());
-                return new SExprList(ListHead);
-            }
-            else
-            {
-                Tokens.Pop();
-                return new SExprList(new SExprBoolean(false));
-            }
+            var length = 0;
+            var ListHead = BuildListNodes(ref length);
+            return new SExprList(ListHead, length);
         }
- 
-        private Core.IR.SExpr BuildListNodes()
+
+        private Core.IR.SExpr BuildListNodes(ref int counter)
         {
             if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
             {
+                counter++;
                 return new SExprListNode(BuildSExpression())
                 {
-                    Next = BuildListNodes()
+                    Next = BuildListNodes(ref counter)
                 };
             }
             else

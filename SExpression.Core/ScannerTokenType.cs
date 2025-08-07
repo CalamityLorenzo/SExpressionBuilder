@@ -8,7 +8,7 @@
         QuestionMark,
         ForwardSlash,
         BackSlash,
-        BackSlashEquals,
+        ForwardSlashEquals,
         Plus,
         PlusEquals,
         Minus,

@@ -1,19 +1,20 @@
 ﻿using System.Collections;
-using System.Runtime.CompilerServices;
 
 namespace SExpression.Core.IR
 {
     public class SExprList : SExpr
     {
 
-        public SExprList(SExpr ListValue)
+        public SExprList(SExpr ListValue, int length)
         {
-            this.Elements = ListValue;
+            this.Head = ListValue;
+            Length = length;
             this.IsAtom = false;
-            this.Value = (Elements is SExprBoolean) ? "nil" : (Elements as SExprListNode).Value;
+            this.Value = Head.Value;
         }
 
-        public SExpr Elements { get; }
+        public SExpr Head { get; }
+        public int Length { get; }
 
         public override void Apply(IExternalAction action)
         {
@@ -23,7 +24,7 @@ namespace SExpression.Core.IR
 
         public SExprList.Enumerator GetEnumerator()
         {
-            return new Enumerator(this.Elements);
+            return new Enumerator(this.Head);
         }
 
         public struct Enumerator(SExpr StartNode) : IEnumerator<SExpr>

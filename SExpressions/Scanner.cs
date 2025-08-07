@@ -47,7 +47,7 @@ namespace SExpressions
                 case '\n' or '\r':
                     AddNewLine();
                     break;
-                case '!' or '-' or '+' or '>' or '<' or '*' or '\\' or '=':
+                case '!' or '-' or '+' or '>' or '<' or '*' or '/' or '=':
 
                     if (Peek() == '=')
                     {
