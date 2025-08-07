@@ -2,7 +2,7 @@
 namespace SExpressions
 {
     [Serializable]
-    internal class ScannerException : Exception
+    public class ScannerException : Exception
     {
         public ScannerException()
         {

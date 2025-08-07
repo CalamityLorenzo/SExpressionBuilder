@@ -24,12 +24,12 @@ namespace SExpression.Parsing
         public List<Core.IR.SExpr> Parse(List<SExpressions.ScannerToken> tokens)
         {
             this.Tokens = new Stack<SExpressions.ScannerToken>(Enumerable.Reverse(tokens));
+            this._SExpressions = new List<Core.IR.SExpr>();
             return FindProgram();
         }
 
         private List<Core.IR.SExpr> FindProgram()
         {
-            this._SExpressions = new List<Core.IR.SExpr>();
             while (this.Tokens.TryPeek(out var peekedToken))
             {
                 _SExpressions.Add(BuildSExpression());
@@ -138,7 +138,7 @@ namespace SExpression.Parsing
             {
                 counter++;
                 var currentNode = BuildSExpression();
-                if (currentNode is SExpressionSymbolOperator)
+                if (currentNode is SExpressionSymbolOperator && counter>1)
                     throw new ParserException("Operator must be the first operation of a list.");
                 return new SExprListNode()
                 {

@@ -2,11 +2,8 @@
 namespace SExpression
 {
     [Serializable]
-    internal class ParserException : Exception
+    public class ParserException : Exception
     {
-        private string v1;
-        private string v2;
-
         public ParserException()
         {
         }

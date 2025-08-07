@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SExpression.Parsing", "SExp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SExpression.Printer", "SExpression.Printer\SExpression.Printer.csproj", "{240ABAAA-91F4-4A0A-8714-0706D3D4A3F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.REPL", "Simple.REPL\Simple.REPL.csproj", "{C12DD615-6493-44EC-8B70-AB358E57D9CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{240ABAAA-91F4-4A0A-8714-0706D3D4A3F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{240ABAAA-91F4-4A0A-8714-0706D3D4A3F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{240ABAAA-91F4-4A0A-8714-0706D3D4A3F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C12DD615-6493-44EC-8B70-AB358E57D9CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C12DD615-6493-44EC-8B70-AB358E57D9CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C12DD615-6493-44EC-8B70-AB358E57D9CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C12DD615-6493-44EC-8B70-AB358E57D9CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

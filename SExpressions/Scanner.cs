@@ -121,7 +121,7 @@ namespace SExpressions
                 if (peekedChar == '\n') this.CurrentLine++;
                 MoveNext();
                 peekedChar = Peek();
-                escapeChar = (GetCurrentChar() == '\\' && !IsAtEnd());
+                escapeChar = (!IsAtEnd() && GetCurrentChar() == '\\' );
             }
 
             if (IsAtEnd() && GetCurrentChar() != '\"')
@@ -161,14 +161,14 @@ namespace SExpressions
             if (LookUps.Keywords.TryGetValue(word, out var canonicalValue))
             {
                 Tokens.Add(
-                CreateToken(SExpression.Core.ScannerTokenType.Keyword, canonicalValue, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx)
+                CreateToken(SExpression.Core.ScannerTokenType.Keyword, canonicalValue, startIdx, CurrentLine, startColumn, CurrentIdx + 1 - startIdx)
                 );
 
             }
             else
             {
                 Tokens.Add(
-                CreateToken(SExpression.Core.ScannerTokenType.Identifier, word, startIdx, CurrentLine, startColumn, CurrentIdx - startIdx)
+                CreateToken(SExpression.Core.ScannerTokenType.Identifier, word, startIdx, CurrentLine, startColumn, CurrentIdx + 1 - startIdx)
                 );
             }
         }
@@ -182,7 +182,7 @@ namespace SExpressions
             }
         }
 
-        private char GetCurrentChar() => AllChars.Span[CurrentIdx];
+        private char GetCurrentChar() => !IsAtEnd() ? AllChars.Span[CurrentIdx] : '\0';
 
         private void MoveNext()
         {
