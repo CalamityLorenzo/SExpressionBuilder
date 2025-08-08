@@ -118,7 +118,7 @@ namespace Compiler.Tests
         [InlineData("(\"abc    def\")", "abc    def")]
         public void ParseStringTests(string input, string value)
         {
-            var expectedValue = new SExprString(value);
+            var expectedValue = new SExprString(value, null);
             var fakeLogger = new FakeLogger<Parser>();
             var scannerTokens = ScannerSetup(input);
             var parser = new SExpression.Parsing.Parser(fakeLogger);

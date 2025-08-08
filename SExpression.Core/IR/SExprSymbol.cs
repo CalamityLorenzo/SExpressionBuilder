@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using SExpressions;
+using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 
 namespace SExpression.Core.IR
 {
@@ -6,7 +8,7 @@ namespace SExpression.Core.IR
     {
         public virtual SymbolType Symbol { get; }
 
-        public SExprSymbol(string name) : base()
+        public SExprSymbol(string name, ScannerToken token) : base(token)
         {
             this.Value = name;
         }
@@ -20,7 +22,7 @@ namespace SExpression.Core.IR
     public class SExpressionSymbolKeyword : SExprSymbol
     {
         public override SymbolType Symbol => SymbolType.Keyword;
-        public SExpressionSymbolKeyword(string name) : base(name)
+        public SExpressionSymbolKeyword(string name, ScannerToken token) : base(name, token)
         {
         }
     }
@@ -28,7 +30,7 @@ namespace SExpression.Core.IR
     public class SExpressionSymbolIdentifier : SExprSymbol
     {
         public override SymbolType Symbol => SymbolType.Identifier;
-        public SExpressionSymbolIdentifier(string name) : base(name)
+        public SExpressionSymbolIdentifier(string name, ScannerToken token) : base(name, token)
         {
         }
     }
@@ -36,7 +38,7 @@ namespace SExpression.Core.IR
     public class SExpressionSymbolOperator : SExprSymbol
     {
         public override SymbolType Symbol => SymbolType.Operator;
-        public SExpressionSymbolOperator(string value) : base(value)
+        public SExpressionSymbolOperator(string name, ScannerToken token) : base(name, token)
         {
         }
     }

@@ -101,11 +101,6 @@ namespace SExpression.Core.IR
         
     }
 
-    public class SExprListNodeEmpty() : SExprListNode(new SExprBoolean(false), new SExprBoolean(false))
-    {
-        public void Apply(IExternalAction action) { }
-    }
-
 
 
 

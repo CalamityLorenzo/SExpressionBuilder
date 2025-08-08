@@ -70,9 +70,9 @@ namespace SExpression.Parsing
             // A Keyword
             return symbolToken.TokenType switch
             {
-                Core.ScannerTokenType.Keyword => new SExpressionSymbolKeyword(symbolToken.Value),
-                Core.ScannerTokenType.Identifier => new SExpressionSymbolIdentifier(symbolToken.Value),
-                Core.ScannerTokenType ops when LookUps.Operators.ContainsKey(symbolToken.SourceValue) => new SExpressionSymbolOperator(symbolToken.SourceValue),
+                Core.ScannerTokenType.Keyword => new SExpressionSymbolKeyword(symbolToken.Value, symbolToken),
+                Core.ScannerTokenType.Identifier => new SExpressionSymbolIdentifier(symbolToken.Value, symbolToken),
+                Core.ScannerTokenType ops when LookUps.Operators.ContainsKey(symbolToken.SourceValue) => new SExpressionSymbolOperator(symbolToken.SourceValue, symbolToken),
                 _ => throw new ParserException($"Atom Symbol type not found {symbolToken.Value}")
             };
 
@@ -87,7 +87,7 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
             // Process the boolean token as needed
-            return new SExprBoolean(booleanToken.Value == "t");
+            return new SExprBoolean(booleanToken.Value == "t", booleanToken);
         }
 
         private Core.IR.SExpr AtomString()
@@ -100,7 +100,7 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
 
-            return new SExprString(stringToken.SourceValue);
+            return new SExprString(stringToken.SourceValue, stringToken);
 
         }
 
@@ -114,7 +114,7 @@ namespace SExpression.Parsing
                 throw new SExpression.ParserException(msg);
             }
             // Process the number token as needed
-            return new SExprNumber(numberToken.Value);
+            return new SExprNumber(numberToken.Value, numberToken);
         }
 
         private Core.IR.SExpr BuildList()
@@ -149,7 +149,7 @@ namespace SExpression.Parsing
                 else
                 {
                     Tokens.Pop();
-                    return new SExprBoolean(false);
+                    return SExprBoolean.False();
                 }
 
             }

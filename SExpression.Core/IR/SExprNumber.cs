@@ -1,8 +1,10 @@
-﻿namespace SExpression.Core.IR
+﻿using SExpressions;
+
+namespace SExpression.Core.IR
 {
     public class SExprNumber : SExpr
     {
-        public SExprNumber(double value) : base()
+        public SExprNumber(double value, ScannerToken token) : base(token)
         {
             this.Value = value.ToString();
         }
@@ -10,7 +12,7 @@
         {
             this.Value = "0";
         }
-        public SExprNumber(string value) : base()
+        public SExprNumber(string value, ScannerToken token) : base(token)
         {
             if (!double.TryParse(value, out _))
             {

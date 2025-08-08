@@ -1,12 +1,17 @@
-﻿namespace SExpression.Core.IR
+﻿using SExpressions;
+
+namespace SExpression.Core.IR
 {
     public class SExprBoolean : SExpr
     {
-        public SExprBoolean(bool value) : base()
+        public static SExprBoolean False()=> new SExprBoolean();
+
+        public SExprBoolean(bool value, ScannerToken token) : base(token)
         {
             this.Value = value ? "t" : "nil";
+            
         }
-        public SExprBoolean() : base()
+        private SExprBoolean() : base()
         {
             this.Value = "nil";
         }
