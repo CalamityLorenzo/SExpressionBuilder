@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SExpression;
 using SExpression.Parsing;
+using SExpression.Printer;
 using SExpressions;
-using System.ComponentModel.Design;
 using System.Text;
 
 namespace Simple.REPL
@@ -13,26 +12,29 @@ namespace Simple.REPL
     {
         private readonly ILogger<REPLService> _logger;
         private readonly Parser _parser;
+        private readonly AstPrinter _printer;
 
-        public REPLService(ILogger<REPLService> logger, Parser parser)
+        // Used by the DS codes
+        private bool terminate = false;
+        private bool displayScanningResult = true;
+
+        public REPLService(ILogger<REPLService> logger, Parser parser, AstPrinter printer)
         {
             _logger = logger;
             _parser = parser;
+            _printer = printer;
+            _printer.ConfigureWriter(Console.Write);
         }
 
         public void Main(string[] args)
         {
             var input = "";
-            var headLine = "S-Expression REPL";
-            Console.WriteLine(headLine);
-            Console.WriteLine(new String('=', headLine.Length));
-            Console.WriteLine();
-
+            ClearTheScreen();
             var inputComplete = false;
 
             StringBuilder inputBuilder = new StringBuilder();
 
-            while (input.ToLowerInvariant() != "##quit".ToLowerInvariant())
+            while (!terminate)
             {
                 try
                 {
@@ -41,7 +43,6 @@ namespace Simple.REPL
 
                     if (input.StartsWith("##"))
                     {
-                        // Empty new line, and we previously recorded user input
                         ProcessCodes(input);
                     }
                     else
@@ -52,8 +53,10 @@ namespace Simple.REPL
                             var inputData = inputBuilder.ToString();
                             inputBuilder.Clear();
                             var scannerData = Scandata(inputData);
-                            WriteScannerOuput(scannerData);
-                            var parserOutpu = this._parser.Parse(scannerData.ToList());
+                            if (displayScanningResult)
+                                WriteScannerOuput(scannerData);
+                            var parserOutput = this._parser.Parse(scannerData.ToList());
+                            parserOutput.Apply(_printer);
 
                         } // Not a new line,
                         else if (input.Length > 0)
@@ -75,9 +78,20 @@ namespace Simple.REPL
             Console.WriteLine("Exiting REPL");
         }
 
+        private void ClearTheScreen()
+        {
+            var headLine = "S-Expression REPL";
+            Console.Clear();
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine(headLine);
+            Console.WriteLine(new String('=', headLine.Length));
+            Console.WriteLine();
+
+        }
+
         private IList<ScannerToken> Scandata(string inputData)
         {
-           return new Scanner().ScanDocument(inputData);
+            return new Scanner().ScanDocument(inputData);
         }
 
         private static void WriteScannerOuput(IList<ScannerToken> scannerData)
@@ -88,9 +102,23 @@ namespace Simple.REPL
             }
         }
 
-        private static void ProcessCodes(string input)
+        private void ProcessCodes(string input)
         {
-            Console.WriteLine("System Codes");
+            switch (input)
+            {
+                case "##quit":
+                    Console.WriteLine("QUIT!");
+                    terminate = true;
+                    break;
+                case "##clear":
+                    ClearTheScreen();
+                    break;
+                case "##scanoutput":
+                    displayScanningResult = !displayScanningResult;
+                    Console.WriteLine($"Scanner output displayed : {displayScanningResult}");
+                    break;
+                default: throw new NotImplementedException("That code does not exist");
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

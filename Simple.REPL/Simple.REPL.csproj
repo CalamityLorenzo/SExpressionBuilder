@@ -15,6 +15,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\SExpression.Parsing\SExpression.Parsing.csproj" />
+    <ProjectReference Include="..\SExpression.Printer\SExpression.Printer.csproj" />
     <ProjectReference Include="..\SExpressions\Scanner.csproj" />
   </ItemGroup>
 

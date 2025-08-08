@@ -17,24 +17,23 @@ namespace SExpression.Parsing
     public class Parser(ILogger<Parser> logger)
     {
         private readonly ILogger<Parser> _logger = logger;
-        private List<Core.IR.SExpr> _SExpressions;
 
         public Stack<SExpressions.ScannerToken> Tokens { get; private set; }
 
-        public List<Core.IR.SExpr> Parse(List<SExpressions.ScannerToken> tokens)
+        public Core.IR.SExprProgram Parse(List<SExpressions.ScannerToken> tokens)
         {
             this.Tokens = new Stack<SExpressions.ScannerToken>(Enumerable.Reverse(tokens));
-            this._SExpressions = new List<Core.IR.SExpr>();
             return FindProgram();
         }
 
-        private List<Core.IR.SExpr> FindProgram()
+        private Core.IR.SExprProgram FindProgram()
         {
+            List<SExpr> expressions = new();
             while (this.Tokens.TryPeek(out var peekedToken))
             {
-                _SExpressions.Add(BuildSExpression());
+                expressions.Add(BuildSExpression());
             }
-            return _SExpressions;
+            return new SExprProgram(expressions);
         }
 
         private Core.IR.SExpr BuildSExpression()
@@ -134,23 +133,30 @@ namespace SExpression.Parsing
 
         private Core.IR.SExpr BuildListNodes(ref int counter)
         {
-            if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
+            if (this.Tokens.Count > 0)
             {
-                counter++;
-                var currentNode = BuildSExpression();
-                if (currentNode is SExpressionSymbolOperator && counter>1)
-                    throw new ParserException("Operator must be the first operation of a list.");
-                return new SExprListNode()
+                if (this.Tokens.Peek().TokenType != Core.ScannerTokenType.CloseBracket)
                 {
-                    Next = BuildListNodes(ref counter)
-                };
+                    counter++;
+                    var currentNode = BuildSExpression();
+                    if (currentNode is SExpressionSymbolOperator && counter > 1)
+                        throw new ParserException("Operator must be the first operation of a list.");
+                    return new SExprListNode(currentNode)
+                    {
+                        Next = BuildListNodes(ref counter)
+                    };
+                }
+                else
+                {
+                    Tokens.Pop();
+                    return new SExprBoolean(false);
+                }
+
             }
             else
             {
-                Tokens.Pop();
-                return new SExprBoolean(false);
+                throw new ParserException($"List incorrectly terminated! Expected closing bracket instead found end of the input");
             }
-
         }
     }
 }

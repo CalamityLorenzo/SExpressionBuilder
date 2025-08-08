@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SExpression.Parsing;
+using SExpression.Printer;
 
 namespace Simple.REPL
 {
@@ -18,6 +19,7 @@ namespace Simple.REPL
                 {
                     services.AddLogging();
                     services.AddSingleton<Parser>();
+                    services.AddSingleton<AstPrinter>();
                     services.AddHostedService<REPLService>();
                 })
                 .Build()

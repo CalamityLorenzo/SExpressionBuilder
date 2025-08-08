@@ -34,7 +34,7 @@ namespace Compiler.Tests
             var scannerTokens = ScannerSetup(input);
             var parser = new SExpression.Parsing.Parser(fakeLogger);
             var parserOutput = parser.Parse(scannerTokens.ToList());
-            logOutput.WriteLine($"Number of SExpressions : {parserOutput.Count()}");
+            logOutput.WriteLine($"Number of SExpressions : {parserOutput.Expressions.Count()}");
         }
 
 
@@ -48,8 +48,8 @@ namespace Compiler.Tests
             var scannerTokens = ScannerSetup(input);
             var parser = new SExpression.Parsing.Parser(fakeLogger);
             var parserOutput = parser.Parse(scannerTokens.ToList());
-            logOutput.WriteLine($"Number of List nodes : {listLength} == {(parserOutput.First() as SExprList).Length}");
-            Assert.True(listLength == (parserOutput.First() as SExprList).Length);
+            logOutput.WriteLine($"Number of List nodes : {listLength} == {(parserOutput.Expressions.First() as SExprList).Length}");
+            Assert.True(listLength == (parserOutput.Expressions.First() as SExprList).Length);
         }
         [Fact]
         //[InlineData("(+ 123 \"abcdef\" define)", 4)]
@@ -65,13 +65,13 @@ namespace Compiler.Tests
                 var parserOutput = parser.Parse(scannerTokens.ToList());
                 if (x == 0)
                 {
-                    var list = parserOutput.First() as SExprList;
+                    var list = parserOutput.Expressions.First() as SExprList;
                     logOutput.WriteLine($"List Length: {list.Length}== {4}");
                     Assert.True(list.Length == 4);
                 }
                 else
                 {
-                    var list = parserOutput.First() as SExprList;
+                    var list = parserOutput.Expressions.First() as SExprList;
                     logOutput.WriteLine($"************************************");
                     logOutput.WriteLine($"List Length: {list.Length}== {4}");
                     foreach (var node in list)
@@ -123,7 +123,7 @@ namespace Compiler.Tests
             var scannerTokens = ScannerSetup(input);
             var parser = new SExpression.Parsing.Parser(fakeLogger);
             var parserOutput = parser.Parse(scannerTokens.ToList());
-            var stringOutput = (parserOutput.First() as SExprList).Value;
+            var stringOutput = (parserOutput.Expressions.First() as SExprList).Value;
             logOutput.WriteLine($"Does they do the match: {stringOutput == expectedValue.Value}");
             logOutput.WriteLine($"input:\t{stringOutput}");
             logOutput.WriteLine($"output:\t{expectedValue}");
@@ -140,7 +140,7 @@ namespace Compiler.Tests
                 var scannerTokens = ScannerSetup(src);
                 var parser = new SExpression.Parsing.Parser(fakeLogger);
                 var parserOutput = parser.Parse(scannerTokens.ToList());
-                var list = parserOutput[0] as SExprList;
+                var list = parserOutput.Expressions[0] as SExprList;
 
                 foreach (var node in list!)
                 {

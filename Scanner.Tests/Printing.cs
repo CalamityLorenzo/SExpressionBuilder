@@ -37,8 +37,9 @@ namespace Compiler.Tests
 
             var flp = new FakeLoggerProvider();
             var stringBuilder = new StringBuilder();
-            var printer = new AstPrinter((str)=>stringBuilder.Append(str));
-            parserOutput.ForEach(a=>a.Apply(printer));
+            var printer = new AstPrinter(new FakeLogger<AstPrinter>());
+            printer.ConfigureWriter((str) => stringBuilder.Append(str));
+            parserOutput.Expressions.ToList().ForEach(a=>a.Apply(printer));
 
             logOutput.WriteLine(stringBuilder.ToString());
 

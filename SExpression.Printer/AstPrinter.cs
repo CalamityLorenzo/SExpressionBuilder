@@ -6,13 +6,15 @@ namespace SExpression.Printer
 {
     public class AstPrinter : IExternalAction
     {
-        private readonly Action<string> writer;
+        private Action<string> writer;
+        private readonly ILogger<AstPrinter> _logger;
 
-        public AstPrinter(ILogger logger)
+        public AstPrinter(ILogger<AstPrinter> logger)
         {
-            writer= (str)=> writer(str);
+            this._logger = logger;
         }
-        public AstPrinter(Action<string> toWrite)
+
+        public void ConfigureWriter(Action<string> toWrite)
         {
             writer = toWrite;
         }
@@ -49,6 +51,7 @@ namespace SExpression.Printer
                 express.Apply(this);
                 counter++;
             }
+            writer("\n");
         }
         public void VisitList(SExprList list)
         {
