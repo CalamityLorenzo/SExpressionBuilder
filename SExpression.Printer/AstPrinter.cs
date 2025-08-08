@@ -55,9 +55,9 @@ namespace SExpression.Printer
         }
         public void VisitList(SExprList list)
         {
-            writer($"\t\n(");
+            writer($"\t(");
             list.Head.Apply(this);
-            writer(")");
+            writer(")\n");
         }
 
         public void VisitListNode(SExprListNode action)
