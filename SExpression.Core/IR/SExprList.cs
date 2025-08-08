@@ -70,7 +70,6 @@ namespace SExpression.Core.IR
 
     public class SExprListNode : SExpr
     {
-        public SExprListNode() { }
         public SExprListNode(SExpr Current)
         {
             this.CurrentValue = Current;
@@ -91,7 +90,7 @@ namespace SExpression.Core.IR
         /// <summary>
         /// SExprBoolean(false) or SExprListNode
         /// </summary>
-        public SExpr Next { get; init; }
+        public required SExpr Next { get; init; }
 
         public override void Apply(IExternalAction action)
         {

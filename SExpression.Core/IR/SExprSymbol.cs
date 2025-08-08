@@ -1,6 +1,4 @@
 ﻿using SExpressions;
-using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 
 namespace SExpression.Core.IR
 {

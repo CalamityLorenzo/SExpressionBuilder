@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SExpression.Printer", "SExp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.REPL", "Simple.REPL\Simple.REPL.csproj", "{C12DD615-6493-44EC-8B70-AB358E57D9CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SExpression.Interpret", "SExpression.Interpret\SExpression.Interpret.csproj", "{E5AFB2FA-7E1A-48E4-B517-25A4444E1027}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{C12DD615-6493-44EC-8B70-AB358E57D9CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C12DD615-6493-44EC-8B70-AB358E57D9CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C12DD615-6493-44EC-8B70-AB358E57D9CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5AFB2FA-7E1A-48E4-B517-25A4444E1027}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5AFB2FA-7E1A-48E4-B517-25A4444E1027}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5AFB2FA-7E1A-48E4-B517-25A4444E1027}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5AFB2FA-7E1A-48E4-B517-25A4444E1027}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

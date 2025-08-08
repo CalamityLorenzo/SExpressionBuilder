@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using SExpression.Core.IR;
-using System.Diagnostics;
 
 namespace SExpression.Printer
 {
