@@ -3,7 +3,7 @@ using SExpression.Core.IR;
 
 namespace SExpression.Interpret
 {
-    public class Interpreter
+    public class Interpreter : IExternalAction
     {
         private SExprProgram _program;
         private readonly ILogger<Interpreter> _logger;
@@ -50,6 +50,41 @@ namespace SExpression.Interpret
             {
                 // 
             }
+        }
+
+        public void VisitList(SExprList list)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VisitAtom(SExprNumber number)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VisitAtom(SExprSymbol symbol)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VisitAtom(SExprString @string)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VisitAtom(SExprBoolean boolean)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VisitProgram(SExprProgram action)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VisitListNode(SExprListNode action)
+        {
+            throw new NotImplementedException();
         }
     }
 }

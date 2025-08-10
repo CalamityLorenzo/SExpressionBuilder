@@ -18,6 +18,8 @@ namespace SExpression.Printer
             writer = toWrite;
         }
 
+        public void Print(SExpr expression) => expression.Apply(this);
+
         public void VisitAtom(SExprNumber number)
         {
             writer($"{number.Value} ");

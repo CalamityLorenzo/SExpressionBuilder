@@ -39,15 +39,11 @@ namespace Compiler.Tests
             var stringBuilder = new StringBuilder();
             var printer = new AstPrinter(new FakeLogger<AstPrinter>());
             printer.ConfigureWriter((str) => stringBuilder.Append(str));
-            parserOutput.Expressions.ToList().ForEach(a=>a.Apply(printer));
+            printer.Print(parserOutput);
 
             logOutput.WriteLine(stringBuilder.ToString());
 
-            //foreach (var item in flp.Collector.GetSnapshot())
-            //{
-            //    logOutput.WriteLine(item.Message);
-            //}
-            //Assert(out == )
+
         }
     }
 }
