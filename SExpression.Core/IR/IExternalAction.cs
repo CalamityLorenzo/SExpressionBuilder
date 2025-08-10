@@ -1,13 +1,13 @@
 ﻿namespace SExpression.Core.IR
 {
-    public interface IExternalAction
+    public interface IExternalAction<T>
     {
-        public void VisitList(SExprList list);
-        public void VisitAtom(SExprNumber number);
-        public void VisitAtom(SExprSymbol symbol);
-        public void VisitAtom(SExprString @string);
-        public void VisitAtom(SExprBoolean boolean);
-        public void VisitProgram(SExprProgram action);
-        public void VisitListNode(SExprListNode action);
+        public T VisitList(SExprList list);
+        public T VisitAtom(SExprNumber number);
+        public T VisitAtom(SExprSymbol symbol);
+        public T VisitAtom(SExprString @string);
+        public T VisitAtom(SExprBoolean boolean);
+        public T VisitProgram(SExprProgram action);
+        public T VisitListNode(SExprListNode action);
     }
 }

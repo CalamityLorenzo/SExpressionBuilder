@@ -11,10 +11,7 @@ namespace SExpression.Core.IR
             this.Value = name;
         }
 
-        public override void Apply(IExternalAction action)
-        {
-            action.VisitAtom(this);
-        }
+        public override T Apply<T>(IExternalAction<T> action)=> action.VisitAtom(this);
     }
 
     public class SExpressionSymbolKeyword : SExprSymbol

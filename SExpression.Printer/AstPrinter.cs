@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using SExpression.Core.IR;
+using System.Text;
 
 namespace SExpression.Printer
 {
-    public class AstPrinter : IExternalAction
+    public class AstPrinter : IExternalAction<string>
     {
         private Action<string> writer;
         private readonly ILogger<AstPrinter> _logger;
@@ -20,56 +21,54 @@ namespace SExpression.Printer
 
         public void Print(SExpr expression) => expression.Apply(this);
 
-        public void VisitAtom(SExprNumber number)
+        public string VisitAtom(SExprNumber number)
         {
-            writer($"{number.Value} ");
+            return ($"{number.Value} ");
         }
 
-        public void VisitAtom(SExprSymbol symbol)
+        public string VisitAtom(SExprSymbol symbol)
         {
-            writer($"{symbol.Value} ");
+            return ($"{symbol.Value} ");
 
         }
 
-        public void VisitAtom(SExprString @string)
+        public string VisitAtom(SExprString @string)
         {
-            writer($"{@string.Value} ");
+            return ($"{@string.Value} ");
         }
 
-        public void VisitAtom(SExprBoolean boolean)
+        public string VisitAtom(SExprBoolean boolean)
         {
-            writer($"{boolean.Value} ");
+            return ($"{boolean.Value} ");
         }
 
 
-        public void VisitProgram(SExprProgram action)
+        public string VisitProgram(SExprProgram action)
         {
-            writer("Program Start\n");
             var counter = 1;
+            StringBuilder sb = new();
             foreach (var express in action.Expressions)
             {
-                writer($"{counter} : ");
-                express.Apply(this);
+                sb.Append(express.Apply(this));
                 counter++;
             }
-            writer("\n");
+            sb.Append("\n");
+            return sb.ToString();
         }
-        public void VisitList(SExprList list)
+        public string VisitList(SExprList list)
         {
-            writer($"\t(");
-            list.Head.Apply(this);
-            writer(")\n");
-        }
-
-        public void VisitListNode(SExprListNode action)
-        {
-            action.CurrentValue.Apply(this);
-            action.Next.Apply(this);
+            return $"\t({list.Head.Apply(this)})\n";
         }
 
-        public void VisitListNode(SExprBoolean action)
+        public string VisitListNode(SExprListNode action)
         {
-            writer($"{action.Value}");
+            var result =action.Next.Apply(this);
+            return $"{action.CurrentValue.Apply(this)} {result}";
+        }
+
+        public string VisitListNode(SExprBoolean action)
+        {
+            return ($"{action.Value}");
         }
     }
 }

@@ -4,12 +4,12 @@ namespace SExpression.Core.IR
 {
     public class SExprBoolean : SExpr
     {
-        public static SExprBoolean False()=> new SExprBoolean();
+        public static SExprBoolean False() => new SExprBoolean();
 
         public SExprBoolean(bool value, ScannerToken token) : base(token)
         {
             this.Value = value ? "t" : "nil";
-            
+
         }
         private SExprBoolean() : base()
         {
@@ -29,9 +29,7 @@ namespace SExpression.Core.IR
             return this.Value ?? "nil";
         }
 
-        public override void Apply(IExternalAction action)
-        {
-            action.VisitAtom(this);
-        }
+        public override T Apply<T>(IExternalAction<T> action)=>action.VisitAtom(this);
+        
     }
 }

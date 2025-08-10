@@ -10,9 +10,6 @@ namespace SExpression.Core.IR
             this.Value = s ?? throw new ArgumentNullException($"Cannot pass a null string! SExpressionString Constructor");
         }
 
-        public override void Apply(IExternalAction action)
-        {
-            action.VisitAtom(this);
-        }
+        public override T Apply<T>(IExternalAction<T> action)=> action.VisitAtom(this);
     }
 }

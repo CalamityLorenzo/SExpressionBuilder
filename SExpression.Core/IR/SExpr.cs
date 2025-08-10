@@ -15,7 +15,7 @@ namespace SExpression.Core.IR
         public string Value { get; init; } = string.Empty;
         public bool IsAtom { get; init; } = true;
         public ScannerToken Token { get; }
-        public abstract void Apply(IExternalAction action);
+        public abstract T Apply<T>(IExternalAction<T> action);
     }
 
 

@@ -16,10 +16,8 @@ namespace SExpression.Core.IR
         public SExpr Head { get; }
         public int Length { get; }
 
-        public override void Apply(IExternalAction action)
-        {
-            action.VisitList(this);
-        }
+            
+        public override T Apply<T>(IExternalAction<T> action) => action.VisitList(this);
 
 
         public SExprList.Enumerator GetEnumerator()
@@ -92,12 +90,10 @@ namespace SExpression.Core.IR
         /// </summary>
         public required SExpr Next { get; init; }
 
-        public override void Apply(IExternalAction action)
-        {
-            action.VisitListNode(this);
-        }
-        public override string ToString()=>$"Current : '{Value}'\n Next: '{Next.Value}'";
-        
+        public override T Apply<T>(IExternalAction<T> action) => action.VisitListNode(this);
+
+        public override string ToString() => $"Current : '{Value}'\n Next: '{Next.Value}'";
+
     }
 
 

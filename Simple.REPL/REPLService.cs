@@ -56,8 +56,7 @@ namespace Simple.REPL
                             if (displayScanningResult)
                                 WriteScannerOuput(scannerData);
                             var parserOutput = this._parser.Parse(scannerData.ToList());
-                            parserOutput.Apply(_printer);
-
+                            Console.WriteLine(parserOutput.Apply(_printer));
                         } // Not a new line,
                         else if (input.Length > 0)
                         {

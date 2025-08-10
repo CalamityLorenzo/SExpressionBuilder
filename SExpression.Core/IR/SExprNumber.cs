@@ -26,9 +26,7 @@ namespace SExpression.Core.IR
             return this.Value ?? "0";
         }
 
-        public override void Apply(IExternalAction action)
-        {
-            action.VisitAtom(this);
-        }
+            
+        public override T Apply<T>(IExternalAction<T> action) => action.VisitAtom(this);
     }
 }

@@ -3,7 +3,7 @@ using SExpression.Core.IR;
 
 namespace SExpression.Interpret
 {
-    public class Interpreter : IExternalAction
+    public class Interpreter : IExternalAction<object>
     {
         private SExprProgram _program;
         private readonly ILogger<Interpreter> _logger;
@@ -14,14 +14,14 @@ namespace SExpression.Interpret
         }
 
 
-        public void Input(Core.IR.SExprProgram program)
+        public void Interpret(Core.IR.SExprProgram program)
         {
             this._program = program;
             foreach (var expression in this._program.Expressions)
             {
                 InterpretExpression(expression);
             }
-            
+
         }
 
         private void InterpretExpression(SExpr expression)
@@ -46,43 +46,43 @@ namespace SExpression.Interpret
         private void ProcessList(SExprList list)
         {
             // get the head as this decides the type of operation we are building
-            if(list.Head is SExpressionSymbolOperator)
+            if (list.Head is SExpressionSymbolOperator)
             {
                 // 
             }
         }
 
-        public void VisitList(SExprList list)
+        public object VisitList(SExprList list)
         {
             throw new NotImplementedException();
         }
 
-        public void VisitAtom(SExprNumber number)
+        public object VisitAtom(SExprNumber number)
         {
             throw new NotImplementedException();
         }
 
-        public void VisitAtom(SExprSymbol symbol)
+        public object VisitAtom(SExprSymbol symbol)
         {
             throw new NotImplementedException();
         }
 
-        public void VisitAtom(SExprString @string)
+        public object VisitAtom(SExprString @string)
         {
             throw new NotImplementedException();
         }
 
-        public void VisitAtom(SExprBoolean boolean)
+        public object VisitAtom(SExprBoolean boolean)
         {
             throw new NotImplementedException();
         }
 
-        public void VisitProgram(SExprProgram action)
+        public object VisitProgram(SExprProgram action)
         {
             throw new NotImplementedException();
         }
 
-        public void VisitListNode(SExprListNode action)
+        public object VisitListNode(SExprListNode action)
         {
             throw new NotImplementedException();
         }

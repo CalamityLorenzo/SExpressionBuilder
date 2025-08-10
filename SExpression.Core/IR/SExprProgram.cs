@@ -11,9 +11,6 @@
             Expressions = expressions;
         }
 
-        public override void Apply(IExternalAction action)
-        {
-            action.VisitProgram(this);
-        }
+        public override T Apply<T>(IExternalAction<T> action)=> action.VisitProgram(this);
     }
 }
