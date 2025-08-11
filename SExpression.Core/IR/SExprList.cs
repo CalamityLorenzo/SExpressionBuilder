@@ -16,7 +16,7 @@ namespace SExpression.Core.IR
         public SExpr Head { get; }
         public int Length { get; }
 
-            
+
         public override T Apply<T>(IExternalAction<T> action) => action.VisitList(this);
 
 
@@ -25,9 +25,9 @@ namespace SExpression.Core.IR
             return new Enumerator(this.Head);
         }
 
-        public struct Enumerator(SExpr StartNode) : IEnumerator<SExpr>
+        public struct Enumerator(SExpr StartNode) : IEnumerator<SExprListNode>
         {
-            public SExpr? Current { get; set; }
+            public SExprListNode? Current { get; set; }
 
             object IEnumerator.Current => Current;
 
@@ -44,16 +44,16 @@ namespace SExpression.Core.IR
                 }
                 else if (Current is null)
                 {
-                    Current = StartNode;
+                    Current = StartNode as SExprListNode;
                     return true;
                 }
 
-                var next = ((SExprListNode)Current).Next;
+                var next = Current.Next;
                 if (next is SExprBoolean)
                     return false;
                 else
                 {
-                    Current = next;
+                    Current = next as SExprListNode;
                     return true;
                 }
             }

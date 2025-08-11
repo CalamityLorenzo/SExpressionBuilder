@@ -24,6 +24,10 @@ namespace Simple.REPL
                 })
                 .Build()
                 .Run();
+
+            Func<double, double, double> func = new((l, r) => l + r);
         }
+
+
     }
 }

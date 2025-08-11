@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SExpression.Core.IR;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.InteropServices;
 
 namespace SExpression.Interpret
 {
@@ -24,37 +26,86 @@ namespace SExpression.Interpret
 
         }
 
-        private void InterpretExpression(SExpr expression)
+        private object InterpretExpression(SExpr expression)
         {
-            switch (expression)
+            return expression switch
             {
-                case var a when a is SExprList:
-                    ProcessList(a as SExprList);
-                    break;
-                case var a when a is SExprBoolean:
-                    ProcessBoolean(a as SExprBoolean);
-                    break;
-                default: throw new ArgumentException(" Unknown Expression");
-            }
+                var a when a is SExprList => VisitList(a as SExprList),
+                var a when a is SExprBoolean => VisitAtom(a as SExprBoolean),
+                var n when n is SExprNumber => VisitAtom(n as SExprNumber),
+                _ => throw new ArgumentException(" Unknown Expression")
+            };
         }
 
-        private void ProcessBoolean(SExprBoolean? sExprBoolean)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void ProcessList(SExprList list)
-        {
-            // get the head as this decides the type of operation we are building
-            if (list.Head is SExpressionSymbolOperator)
-            {
-                // 
-            }
-        }
 
         public object VisitList(SExprList list)
         {
-            throw new NotImplementedException();
+            // get the head as this decides the type of operation we are building
+            // Then 'apply' the procedure to the elements
+            if (list.Head is SExprListNode)
+            {
+                if ((list.Head as SExprListNode).CurrentValue is SExpressionSymbolOperator)
+                {
+                    var @operator = (list.Head as SExprListNode).CurrentValue as SExpressionSymbolOperator;
+                    return ApplyOperator(@operator, list);
+                }
+            }
+            return new object();
+        }
+
+        private object ApplyOperator(SExpressionSymbolOperator @operator, SExprList list)
+        {
+            if (OperationsLookup.Operations.TryGetValue(@operator.Value, out var func))
+            {
+                return ProcessListNumbers(func, list);
+            }
+            return "nil";
+        }
+
+        private double ProcessListNumbers(Func<double, double, double> func, SExprList list)
+        {
+            double? accumulator = null;
+            foreach (var item in list)
+            {
+                if (!(item!.CurrentValue is SExpressionSymbolOperator))
+                {
+                    continue;
+                }
+                if (accumulator is null)
+                {
+                    var number = InterpretExpression(item.CurrentValue);
+                    if (!(number is double))
+                    {
+                        throw new InterpreterError($"Not a number!");
+                    }
+                    else
+                    {
+                        accumulator = (double)number;
+                    }
+
+                    // Is the next node a value?
+                    // or a terminator, cos that changes how we process.
+                    if (item.Next is SExprBoolean)
+                    {
+                        // Get unary values;
+                    }
+                }
+                else
+                {
+                    var number = InterpretExpression(item.CurrentValue);
+                    if (!(number is double))
+                    {
+                        throw new InterpreterError($"Not a number!");
+                    }
+                    else
+                    {
+                        accumulator += func(accumulator.Value, (double)number);
+                    }
+                    if (item.Next is SExprBoolean)
+                        break;
+                }
+            }
+            return accumulator.Value;
         }
 
         public object VisitAtom(SExprNumber number)
