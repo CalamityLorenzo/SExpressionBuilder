@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using SExpression.Core.IR;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.InteropServices;
 
 namespace SExpression.Interpret
 {
@@ -21,7 +19,7 @@ namespace SExpression.Interpret
             this._program = program;
             foreach (var expression in this._program.Expressions)
             {
-                InterpretExpression(expression);
+                var r = InterpretExpression(expression);
             }
 
         }
@@ -33,7 +31,7 @@ namespace SExpression.Interpret
                 var a when a is SExprList => VisitList(a as SExprList),
                 var a when a is SExprBoolean => VisitAtom(a as SExprBoolean),
                 var n when n is SExprNumber => VisitAtom(n as SExprNumber),
-                _ => throw new ArgumentException(" Unknown Expression")
+                _ => throw new ArgumentException("Unknown Expression")
             };
         }
 
@@ -67,7 +65,7 @@ namespace SExpression.Interpret
             double? accumulator = null;
             foreach (var item in list)
             {
-                if (!(item!.CurrentValue is SExpressionSymbolOperator))
+                if (item!.CurrentValue is SExpressionSymbolOperator)
                 {
                     continue;
                 }
@@ -99,7 +97,7 @@ namespace SExpression.Interpret
                     }
                     else
                     {
-                        accumulator += func(accumulator.Value, (double)number);
+                        accumulator = func(accumulator.Value, (double)number);
                     }
                     if (item.Next is SExprBoolean)
                         break;
@@ -108,10 +106,7 @@ namespace SExpression.Interpret
             return accumulator.Value;
         }
 
-        public object VisitAtom(SExprNumber number)
-        {
-            throw new NotImplementedException();
-        }
+        public object VisitAtom(SExprNumber number) => number.AsDouble;
 
         public object VisitAtom(SExprSymbol symbol)
         {
